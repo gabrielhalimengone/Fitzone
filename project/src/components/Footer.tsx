@@ -152,7 +152,7 @@ const Footer = () => {
           </p>
           <form
             onSubmit={(e) => e.preventDefault()}
-            className="flex max-w-md mx-auto gap-2"
+            className="flex flex-col sm:flex-row max-w-md mx-auto gap-3 sm:gap-2"
           >
             <input
               type="email"
@@ -162,7 +162,7 @@ const Footer = () => {
             />
             <button
               type="submit"
-              className="btn-primary px-5 py-3 rounded-xl text-sm whitespace-nowrap flex items-center gap-2"
+              className="btn-primary px-5 py-3 rounded-xl text-sm whitespace-nowrap flex justify-center items-center gap-2 w-full sm:w-auto"
             >
               S'inscrire
               <ArrowRight className="h-4 w-4" />
@@ -171,9 +171,9 @@ const Footer = () => {
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-600 text-xs">
+        <div className="pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-600 text-xs text-center md:text-left">
           <p>© {currentYear} FitZone. Tous droits réservés.</p>
-          <div className="flex space-x-6">
+          <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6">
             {['Politique de Confidentialité', "Conditions d'Utilisation", 'Mentions Légales'].map((item) => (
               <a key={item} href="#" className="hover:text-gray-300 transition-colors duration-200">
                 {item}
