@@ -1,0 +1,131 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #0a0a0f;
+    color: #fff;
+  }
+
+  ::selection {
+    background-color: rgba(249, 115, 22, 0.35);
+    color: #fff;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #13131e;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #f97316, #ea580c);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #f97316;
+  }
+}
+
+@layer components {
+  /* Glassmorphism card */
+  .glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .glass-light {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+  }
+
+  /* Gradient text */
+  .text-gradient {
+    background: linear-gradient(135deg, #f97316, #ef4444);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-light {
+    background: linear-gradient(135deg, #fb923c, #fbbf24);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Glow button */
+  .btn-primary {
+    @apply bg-gradient-to-r from-brand-500 to-brand-600 text-white font-semibold rounded-xl px-8 py-4 transition-all duration-300;
+    box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+  }
+  .btn-primary:hover {
+    @apply from-brand-400 to-brand-500 scale-105;
+    box-shadow: 0 0 35px rgba(249, 115, 22, 0.6);
+  }
+
+  .btn-outline {
+    @apply border-2 border-white/30 text-white font-semibold rounded-xl px-8 py-4 transition-all duration-300 backdrop-blur-sm;
+  }
+  .btn-outline:hover {
+    @apply bg-white text-gray-900 border-white scale-105;
+  }
+
+  /* Section title */
+  .section-title {
+    @apply font-display text-4xl md:text-5xl font-black tracking-tight;
+  }
+
+  /* Dark card */
+  .dark-card {
+    background: rgba(19, 19, 30, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(12px);
+  }
+
+  /* Pill badge */
+  .pill {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+  }
+
+  /* Animated underline for nav */
+  .nav-link {
+    @apply relative text-sm font-medium transition-colors duration-200;
+  }
+  .nav-link::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-brand-500 to-brand-400 rounded-full transition-all duration-300;
+  }
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    @apply w-full;
+  }
+}
+
+@layer utilities {
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  }
+
+  .border-glow {
+    border: 1px solid rgba(249, 115, 22, 0.3);
+    box-shadow: 0 0 20px rgba(249, 115, 22, 0.1), inset 0 0 20px rgba(249, 115, 22, 0.03);
+  }
+
+  .text-shadow {
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+  }
+}
