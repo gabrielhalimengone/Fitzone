@@ -189,7 +189,7 @@ const Testimonials = () => {
                   </div>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
                   {[
                     { label: 'Programme', val: current.program },
                     { label: 'Durée', val: current.duration },
@@ -228,11 +228,10 @@ const Testimonials = () => {
             <button
               key={index}
               onClick={() => goTo(index)}
-              className={`transition-all duration-300 rounded-full ${
-                index === currentTestimonial
-                  ? `w-8 h-2.5 bg-gradient-to-r ${current.color}`
-                  : 'w-2.5 h-2.5 bg-white/15 hover:bg-white/30'
-              }`}
+              className={`transition-all duration-300 rounded-full ${index === currentTestimonial
+                ? `w-8 h-2.5 bg-gradient-to-r ${current.color}`
+                : 'w-2.5 h-2.5 bg-white/15 hover:bg-white/30'
+                }`}
             />
           ))}
         </div>
@@ -246,11 +245,10 @@ const Testimonials = () => {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: index * 0.07 }}
               onClick={() => goTo(index)}
-              className={`dark-card rounded-2xl p-5 cursor-pointer transition-all duration-300 hover:border-white/15 ${
-                index === currentTestimonial
-                  ? `border-white/15 ring-1 ring-brand-500/40`
-                  : ''
-              }`}
+              className={`dark-card rounded-2xl p-5 cursor-pointer transition-all duration-300 hover:border-white/15 ${index === currentTestimonial
+                ? `border-white/15 ring-1 ring-brand-500/40`
+                : ''
+                }`}
             >
               {/* Color top bar */}
               <div className={`h-0.5 rounded-full bg-gradient-to-r ${testimonial.color} mb-4`} />

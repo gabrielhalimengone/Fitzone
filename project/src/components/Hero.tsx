@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Play, Users, Star, Award, ChevronRight } from 'lucide-react';
+import { Play, Users, Star, Award, ChevronRight, X } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
 import gymVideo from '../assets/gym.mp4';
 
 // Animated counter hook
@@ -37,17 +38,17 @@ function useCountUp(target: number, duration = 1500) {
 const StatCard = ({ icon: Icon, value, suffix = '', label, display }: { icon: React.ElementType; value: number; suffix?: string; label: string; display?: string }) => {
   const { count, ref } = useCountUp(value);
   return (
-    <div ref={ref} className="text-center group">
-      <div className="relative inline-flex">
+    <div ref={ref} className="text-center group flex flex-col items-center">
+      <div className="relative inline-flex mb-3">
         <div className="absolute inset-0 bg-brand-500/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300" />
-        <div className="relative bg-white/5 border border-white/10 rounded-2xl p-3 mb-3 group-hover:border-brand-500/40 transition-all duration-300">
-          <Icon className="h-7 w-7 text-brand-400" />
+        <div className="relative bg-white/5 border border-white/10 rounded-2xl p-2.5 sm:p-3 group-hover:border-brand-500/40 transition-all duration-300">
+          <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-brand-400" />
         </div>
       </div>
-      <div className="text-3xl font-display font-black text-white">
+      <div className="text-2xl sm:text-3xl font-display font-black text-white leading-tight">
         {display ?? `${count}${suffix}`}
       </div>
-      <div className="text-sm text-gray-400 mt-1 font-medium">{label}</div>
+      <div className="text-xs sm:text-sm text-gray-400 mt-1 font-medium">{label}</div>
     </div>
   );
 };
@@ -57,6 +58,8 @@ const FloatingShape = ({ className }: { className: string }) => (
 );
 
 const Hero = () => {
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
+
   return (
     <section className="relative flex items-center bg-dark-900 overflow-hidden pt-24 pb-6 lg:pt-24 lg:pb-8">
       {/* Background Video */}
@@ -124,7 +127,10 @@ const Hero = () => {
                 Commencer Maintenant
                 <ChevronRight className="h-5 w-5" />
               </Link>
-              <button className="group flex items-center gap-3 text-white font-semibold hover:text-brand-400 transition-colors">
+              <button 
+                onClick={() => setIsVideoOpen(true)}
+                className="group flex items-center gap-3 text-white font-semibold hover:text-brand-400 transition-colors"
+              >
                 <span className="flex items-center justify-center w-12 h-12 rounded-full bg-white/10 border border-white/10 group-hover:bg-brand-500/20 group-hover:border-brand-500/30 transition-all duration-300">
                   <Play className="h-4 w-4 fill-current ml-0.5" />
                 </span>
@@ -133,7 +139,7 @@ const Hero = () => {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-8 pt-6 border-t border-white/8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-8 pt-6 border-t border-white/8">
               <StatCard icon={Users} value={500} suffix="+" label="Membres Actifs" />
               <StatCard icon={Star} value={49} suffix="" label="Note Moyenne" display="4.9/5" />
               <StatCard icon={Award} value={5} suffix=" ans" label="D'Expérience" />
@@ -177,6 +183,41 @@ const Hero = () => {
           </motion.div>
         </div>
       </div>
+
+      {/* Video Modal */}
+      <AnimatePresence>
+        {isVideoOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+          >
+            <div className="absolute inset-0" onClick={() => setIsVideoOpen(false)} />
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl bg-dark-800"
+            >
+              <button
+                onClick={() => setIsVideoOpen(false)}
+                className="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-brand-500 text-white rounded-full transition-colors backdrop-blur-sm"
+              >
+                <X className="h-5 w-5" />
+              </button>
+              <div className="aspect-video w-full bg-black">
+                <video
+                  src={gymVideo}
+                  autoPlay
+                  controls
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
