@@ -157,7 +157,7 @@ const Footer = () => {
             <input
               type="email"
               placeholder="votre.email@exemple.com"
-              className="flex-1 px-4 py-3 bg-white/5 text-white border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-sm placeholder-gray-600 transition-all duration-200"
+              className="flex-1 px-4 py-3 bg-white/5 text-white border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-sm placeholder-gray-400 transition-all duration-200"
               required
             />
             <button
@@ -171,11 +171,11 @@ const Footer = () => {
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-600 text-xs text-center md:text-left">
+        <div className="pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-400 text-xs text-center md:text-left">
           <p>© {currentYear} FitZone. Tous droits réservés.</p>
           <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6">
             {['Politique de Confidentialité', "Conditions d'Utilisation", 'Mentions Légales'].map((item) => (
-              <a key={item} href="#" className="hover:text-gray-300 transition-colors duration-200">
+              <a key={item} href="#" className="hover:text-white transition-colors duration-200">
                 {item}
               </a>
             ))}

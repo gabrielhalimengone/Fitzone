@@ -64,7 +64,7 @@ const Contact = () => {
   ];
 
   const inputClass = (hasError: boolean) =>
-    `w-full px-4 py-3.5 bg-white/5 border rounded-xl text-white placeholder-gray-600 text-sm outline-none transition-all duration-200 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 ${
+    `w-full px-4 py-3.5 bg-white/5 border rounded-xl text-white placeholder-gray-400 text-sm outline-none transition-all duration-200 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 ${
       hasError ? 'border-red-500/50 bg-red-500/5' : 'border-white/8 hover:border-white/15'
     }`;
 
@@ -109,7 +109,7 @@ const Contact = () => {
                   </div>
                   <h3 className="font-semibold text-white text-sm mb-2">{info.title}</h3>
                   {info.details.map((detail, idx) => (
-                    <p key={idx} className="text-gray-400 text-xs leading-relaxed">{detail}</p>
+                    <p key={idx} className="text-gray-300 text-xs leading-relaxed">{detail}</p>
                   ))}
                 </motion.div>
               ))}

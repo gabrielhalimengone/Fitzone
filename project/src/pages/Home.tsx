@@ -122,7 +122,7 @@ const Home = () => {
             </p>
             <Link
               to="/contact"
-              className="inline-flex items-center gap-3 bg-white text-brand-600 px-10 py-5 rounded-2xl font-bold text-lg hover:bg-gray-100 transition-all duration-300 hover:scale-105 shadow-xl"
+              className="inline-flex items-center gap-3 bg-white text-brand-700 px-10 py-5 rounded-2xl font-bold text-lg hover:bg-gray-100 transition-all duration-300 hover:scale-105 shadow-xl"
             >
               Essai Gratuit de 7 Jours
               <ArrowRight className="h-5 w-5" />

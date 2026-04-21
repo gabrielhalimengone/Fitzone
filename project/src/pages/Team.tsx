@@ -127,14 +127,14 @@ const Team = () => {
                       </div>
                     </div>
 
-                    <p className="text-gray-400 text-sm mb-4 leading-relaxed">{coach.bio}</p>
+                    <p className="text-gray-300 text-sm mb-4 leading-relaxed">{coach.bio}</p>
 
                     <div className="flex gap-4 mb-4">
-                      <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                      <div className="flex items-center gap-1.5 text-xs text-gray-400">
                         <Award className="h-3.5 w-3.5 text-brand-400" />
                         {coach.experience} d'exp.
                       </div>
-                      <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                      <div className="flex items-center gap-1.5 text-xs text-gray-400">
                         <Users className="h-3.5 w-3.5 text-brand-400" />
                         {coach.clients} clients
                       </div>
@@ -155,7 +155,7 @@ const Team = () => {
                     {/* Certifications */}
                     <div className="space-y-1 mb-5">
                       {coach.certifications.map((cert, i) => (
-                        <div key={i} className="flex items-center gap-2 text-xs text-gray-500">
+                        <div key={i} className="flex items-center gap-2 text-xs text-gray-400">
                           <CheckCircle className="h-3 w-3 text-brand-500 shrink-0" />
                           {cert}
                         </div>
@@ -188,7 +188,7 @@ const Team = () => {
             <p className="text-xl text-white/80 mb-8 max-w-xl mx-auto">
               Nos coachs sont là pour vous accompagner dans l'atteinte de vos objectifs.
             </p>
-            <button className="bg-white text-brand-600 px-10 py-4 rounded-2xl font-bold text-lg hover:bg-gray-100 transition-all duration-300 hover:scale-105 shadow-xl">
+            <button className="bg-white text-brand-700 px-10 py-4 rounded-2xl font-bold text-lg hover:bg-gray-100 transition-all duration-300 hover:scale-105 shadow-xl">
               Réserver votre Consultation Gratuite
             </button>
           </div>

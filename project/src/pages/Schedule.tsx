@@ -156,7 +156,7 @@ const Schedule = () => {
               <thead>
                 <tr className="border-b border-white/5">
                   <th className="px-5 py-5 text-left w-20">
-                    <div className="flex items-center gap-2 text-gray-500 text-xs font-semibold uppercase tracking-wider">
+                    <div className="flex items-center gap-2 text-gray-400 text-xs font-semibold uppercase tracking-wider">
                       <Clock className="h-3.5 w-3.5" />
                       Heure
                     </div>
@@ -165,7 +165,7 @@ const Schedule = () => {
                     const date = weekDates[i];
                     const todayClass = isToday(date);
                     return (
-                      <th key={day} className={`px-4 py-5 text-left text-xs font-semibold uppercase tracking-wider ${todayClass ? 'text-brand-400' : 'text-gray-500'}`}>
+                      <th key={day} className={`px-4 py-5 text-left text-xs font-semibold uppercase tracking-wider ${todayClass ? 'text-brand-400' : 'text-gray-400'}`}>
                         <div className={`flex flex-col gap-1`}>
                           <span>{day.substring(0, 3)}</span>
                           <span className={`text-lg font-black ${todayClass ? 'text-brand-400' : 'text-white'}`}>
@@ -183,7 +183,7 @@ const Schedule = () => {
               <tbody>
                 {filledTimes.map((time, rowIndex) => (
                   <tr key={time} className={`border-b border-white/[0.03] ${rowIndex % 2 === 0 ? 'bg-white/[0.01]' : ''}`}>
-                    <td className="px-5 py-3 text-sm font-mono font-semibold text-gray-600 whitespace-nowrap">
+                    <td className="px-5 py-3 text-sm font-mono font-semibold text-gray-400 whitespace-nowrap">
                       {time}
                     </td>
                     {days.map((day, dayIndex) => {
@@ -206,7 +206,7 @@ const Schedule = () => {
                               <div className={`h-1 bg-gradient-to-r ${colorClass}`} />
                               <div className="p-2.5">
                                 <div className="text-xs font-semibold text-white mb-1 leading-tight">{session.course}</div>
-                                <div className="text-[10px] text-gray-500 mb-2">{session.duration} min</div>
+                                <div className="text-[10px] text-gray-400 mb-2">{session.duration} min</div>
                                 {session.available ? (
                                   <button
                                     onClick={() => handleBooking(day, time, session.course)}
@@ -225,7 +225,7 @@ const Schedule = () => {
                               </div>
                             </div>
                           ) : (
-                            <div className="text-gray-800 text-center text-xs select-none">·</div>
+                            <div className="text-white/10 text-center text-xs select-none">·</div>
                           )}
                         </td>
                       );
@@ -244,7 +244,7 @@ const Schedule = () => {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="mt-6 dark-card rounded-2xl p-5 flex flex-wrap gap-6 items-center"
         >
-          <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Légende :</span>
+          <span className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Légende :</span>
           <div className="flex items-center gap-2">
             <div className="w-8 h-1.5 rounded-full bg-gradient-to-r from-brand-500 to-brand-400" />
             <span className="text-sm text-gray-400">Places disponibles</span>

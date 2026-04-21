@@ -239,7 +239,7 @@ const Courses = () => {
                     <p className="text-gray-400 text-sm mb-5 leading-relaxed">{course.description}</p>
 
                     {/* Meta */}
-                    <div className="flex items-center gap-4 text-xs text-gray-500 mb-6">
+                    <div className="flex items-center gap-4 text-xs text-gray-400 mb-6">
                       <div className="flex items-center gap-1.5">
                         <Clock className="h-3.5 w-3.5" />
                         {course.duration}
