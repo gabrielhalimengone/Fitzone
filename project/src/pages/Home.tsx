@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Hero from '../components/Hero';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Target, Users, Clock, Trophy, ArrowRight, Zap } from 'lucide-react';
+import { Target, Users, Clock, Trophy, ArrowRight, Zap, X, CheckCircle2, User } from 'lucide-react';
 
 const features = [
   {
@@ -36,13 +36,24 @@ const features = [
 ];
 
 const Home = () => {
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleBookingSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitted(true);
+    setTimeout(() => {
+      setIsSubmitted(false);
+      setIsBookingOpen(false);
+    }, 3000);
+  };
+
   return (
     <div>
       <Hero />
 
       {/* Features Section */}
       <section className="pt-16 pb-28 bg-dark-800 relative overflow-hidden">
-        {/* Background pattern */}
         <div className="absolute inset-0 opacity-[0.03]"
           style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)', backgroundSize: '32px 32px' }}
         />
@@ -79,13 +90,11 @@ const Home = () => {
                 whileHover={{ y: -8 }}
                 className="relative group"
               >
-                {/* Card glow */}
                 <div
                   className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"
                   style={{ background: feature.glow }}
                 />
                 <div className="relative dark-card rounded-3xl p-8 h-full transition-all duration-300 group-hover:border-white/15">
-                  {/* Icon */}
                   <div className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} mb-6 shadow-lg`}>
                     <feature.icon className="h-7 w-7 text-white" />
                   </div>
@@ -100,7 +109,6 @@ const Home = () => {
 
       {/* CTA Section */}
       <section className="pt-16 pb-28 relative overflow-hidden">
-        {/* Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-brand-700 via-brand-600 to-red-700" />
         <div className="absolute inset-0 bg-noise opacity-30" />
         <div className="absolute top-0 left-0 w-96 h-96 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
@@ -120,17 +128,102 @@ const Home = () => {
             <p className="text-xl text-white/80 mb-10 max-w-xl mx-auto leading-relaxed">
               Rejoignez des centaines de membres qui ont déjà transformé leur vie avec nos programmes d'élite.
             </p>
-            <Link
-              to="/contact"
-              className="inline-flex items-center gap-3 bg-white text-brand-700 px-10 py-5 rounded-2xl font-bold text-lg hover:bg-gray-100 transition-all duration-300 hover:scale-105 shadow-xl"
-            >
-              Essai Gratuit de 7 Jours
-              <ArrowRight className="h-5 w-5" />
-            </Link>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                to="/subscriptions"
+                className="inline-flex items-center gap-3 bg-white text-brand-700 px-10 py-5 rounded-2xl font-bold text-lg hover:bg-gray-100 transition-all duration-300 hover:scale-105 shadow-xl w-full sm:w-auto justify-center"
+              >
+                Démarrer mon parcours
+                <ArrowRight className="h-5 w-5" />
+              </Link>
+              <button
+                onClick={() => setIsBookingOpen(true)}
+                className="inline-flex items-center gap-3 bg-dark-900/40 backdrop-blur-md border border-white/20 text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-dark-900/60 transition-all duration-300 hover:scale-105 shadow-xl w-full sm:w-auto justify-center"
+              >
+                Réserver une séance
+                <Clock className="h-5 w-5" />
+              </button>
+            </div>
             <p className="text-white/50 text-sm mt-5">Aucune carte de crédit requise · Annulation à tout moment</p>
           </motion.div>
         </div>
       </section>
+
+      {/* Booking Modal */}
+      <AnimatePresence>
+        {isBookingOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+          >
+            <div className="absolute inset-0" onClick={() => setIsBookingOpen(false)} />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-lg dark-card rounded-[2.5rem] p-8 md:p-10 shadow-2xl border-white/10"
+            >
+              <button
+                onClick={() => setIsBookingOpen(false)}
+                className="absolute top-6 right-6 p-2 text-gray-500 hover:text-white transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
+
+              {isSubmitted ? (
+                <div className="text-center py-10">
+                  <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <CheckCircle2 className="h-10 w-10 text-emerald-500" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-4">Réservation Reçue !</h3>
+                  <p className="text-gray-400">
+                    Nous avons bien reçu votre demande de réservation. Un coach vous contactera d'ici 24h pour confirmer le créneau.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <h2 className="text-3xl font-black text-white mb-2">Réserver une séance</h2>
+                  <p className="text-gray-400 mb-8">Choisissez votre type de séance et nous vous rappellerons.</p>
+
+                  <form onSubmit={handleBookingSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Nom Complet</label>
+                      <input required type="text" placeholder="Jean Dupont" className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:ring-2 focus:ring-brand-500 transition-all" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Téléphone</label>
+                        <input required type="tel" placeholder="06..." className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:ring-2 focus:ring-brand-500 transition-all" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Type de séance</label>
+                        <select className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:ring-2 focus:ring-brand-500 transition-all appearance-none">
+                          <option className="bg-dark-800">Cardio</option>
+                          <option className="bg-dark-800">Musculation</option>
+                          <option className="bg-dark-800">Yoga</option>
+                          <option className="bg-dark-800">CrossFit</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Coach préféré (Optionnel)</label>
+                      <select className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:ring-2 focus:ring-brand-500 transition-all appearance-none">
+                        <option className="bg-dark-800">Aucune préférence</option>
+                        <option className="bg-dark-800">Marc Durand</option>
+                        <option className="bg-dark-800">Sarah Lopez</option>
+                        <option className="bg-dark-800">Jean Rémy</option>
+                      </select>
+                    </div>
+                    <button type="submit" className="w-full btn-primary py-4 text-lg font-bold mt-4">Confirmer la réservation</button>
+                  </form>
+                </>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

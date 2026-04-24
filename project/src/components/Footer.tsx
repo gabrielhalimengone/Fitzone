@@ -1,8 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Dumbbell, MapPin, Phone, Mail, Facebook, Instagram, Twitter, Youtube, ArrowRight } from 'lucide-react';
+import { Dumbbell, MapPin, Phone, Mail, Facebook, Instagram, Twitter, Youtube, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { api } from '../services/api';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Footer = () => {
+  const [email, setEmail] = useState('');
+  const [isSubscribed, setIsSubscribed] = useState(false);
+
+  const handleNewsletterSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email) {
+      api.subscribeNewsletter(email);
+      setIsSubscribed(true);
+      setEmail('');
+      setTimeout(() => setIsSubscribed(false), 5000);
+    }
+  };
+
   const socialLinks = [
     { icon: Facebook, href: '#', label: 'Facebook', color: 'hover:bg-blue-600' },
     { icon: Instagram, href: '#', label: 'Instagram', color: 'hover:bg-gradient-to-br hover:from-purple-600 hover:to-pink-600' },
@@ -145,29 +160,56 @@ const Footer = () => {
         </div>
 
         {/* Newsletter */}
-        <div className="dark-card rounded-2xl p-8 mb-10 text-center">
-          <h3 className="text-xl font-bold text-white mb-2">Restez Informé</h3>
-          <p className="text-gray-400 text-sm mb-6 max-w-xl mx-auto">
-            Inscrivez-vous à notre newsletter pour recevoir actualités, conseils fitness et offres spéciales.
-          </p>
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            className="flex flex-col sm:flex-row max-w-md mx-auto gap-3 sm:gap-2"
-          >
-            <input
-              type="email"
-              placeholder="votre.email@exemple.com"
-              className="flex-1 px-4 py-3 bg-white/5 text-white border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-sm placeholder-gray-400 transition-all duration-200"
-              required
-            />
-            <button
-              type="submit"
-              className="btn-primary px-5 py-3 rounded-xl text-sm whitespace-nowrap flex justify-center items-center gap-2 w-full sm:w-auto"
-            >
-              S'inscrire
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </form>
+        <div className="dark-card rounded-2xl p-8 mb-10 text-center relative overflow-hidden">
+          <AnimatePresence mode="wait">
+            {isSubscribed ? (
+              <motion.div
+                key="success"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="flex flex-col items-center justify-center"
+              >
+                <div className="w-12 h-12 bg-emerald-500/10 rounded-full flex items-center justify-center mb-4">
+                  <CheckCircle2 className="h-6 w-6 text-emerald-500" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">Merci pour votre inscription !</h3>
+                <p className="text-gray-400 text-sm">Vous recevrez bientôt nos prochaines actualités.</p>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="form"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <h3 className="text-xl font-bold text-white mb-2">Restez Informé</h3>
+                <p className="text-gray-400 text-sm mb-6 max-w-xl mx-auto">
+                  Inscrivez-vous à notre newsletter pour recevoir actualités, conseils fitness et offres spéciales.
+                </p>
+                <form
+                  onSubmit={handleNewsletterSubmit}
+                  className="flex flex-col sm:flex-row max-w-md mx-auto gap-3 sm:gap-2"
+                >
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="votre.email@exemple.com"
+                    className="flex-1 px-4 py-3 bg-white/5 text-white border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-sm placeholder-gray-400 transition-all duration-200"
+                    required
+                  />
+                  <button
+                    type="submit"
+                    className="btn-primary px-5 py-3 rounded-xl text-sm whitespace-nowrap flex justify-center items-center gap-2 w-full sm:w-auto"
+                  >
+                    S'inscrire
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </form>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Bottom bar */}

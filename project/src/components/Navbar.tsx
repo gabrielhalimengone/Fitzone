@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Dumbbell } from 'lucide-react';
+import { Menu, X, Dumbbell, User, LogIn, UserPlus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { user, isAuthenticated } = useAuth();
   const location = useLocation();
 
   const navigationLinks = [
@@ -13,7 +15,7 @@ const Navbar = () => {
     { name: 'Cours', path: '/courses' },
     { name: 'Planning', path: '/schedule' },
     { name: 'Équipe', path: '/team' },
-    { name: 'Témoignages', path: '/testimonials' },
+    { name: 'Abonnements', path: '/subscriptions' },
     { name: 'Contact', path: '/contact' },
   ];
 
@@ -56,12 +58,12 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden lg:flex items-center space-x-1">
             {navigationLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`nav-link px-4 py-2 rounded-lg text-sm font-medium ${
+                className={`nav-link px-3 py-2 rounded-lg text-sm font-medium ${
                   isActive(link.path)
                     ? 'text-brand-400 active'
                     : 'text-gray-300 hover:text-white hover:bg-white/5'
@@ -70,18 +72,45 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
-            <div className="ml-4">
-              <Link
-                to="/contact"
-                className="btn-primary text-sm px-6 py-2.5 rounded-xl inline-block"
-              >
-                Essai Gratuit
-              </Link>
+            
+            <div className="flex items-center gap-2 ml-4 pl-4 border-l border-white/10">
+              {isAuthenticated ? (
+                <Link
+                  to="/profile"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                    isActive('/profile')
+                      ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/20'
+                      : 'text-gray-300 hover:text-white hover:bg-white/5 border border-white/5'
+                  }`}
+                >
+                  <div className="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center">
+                    <User className="h-3.5 w-3.5" />
+                  </div>
+                  {user?.fullName.split(' ')[0]}
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    to="/auth"
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-gray-300 hover:text-white transition-all"
+                  >
+                    <LogIn className="h-4 w-4" />
+                    Connexion
+                  </Link>
+                  <Link
+                    to="/auth"
+                    className="btn-primary text-xs px-5 py-2.5 rounded-xl flex items-center gap-2"
+                  >
+                    <UserPlus className="h-4 w-4" />
+                    S'inscrire
+                  </Link>
+                </>
+              )}
             </div>
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          <div className="lg:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-gray-300 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-all duration-200"
@@ -111,7 +140,7 @@ const Navbar = () => {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="md:hidden overflow-hidden border-t border-white/5 bg-dark-900/95 backdrop-blur-xl"
+            className="lg:hidden overflow-hidden border-t border-white/5 bg-dark-900/95 backdrop-blur-xl"
           >
             <div className="px-4 py-4 space-y-1">
               {navigationLinks.map((link, i) => (
@@ -119,7 +148,7 @@ const Navbar = () => {
                   key={link.path}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.06 }}
+                  transition={{ delay: i * 0.05 }}
                 >
                   <Link
                     to={link.path}
@@ -133,18 +162,39 @@ const Navbar = () => {
                   </Link>
                 </motion.div>
               ))}
+              
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: navigationLinks.length * 0.06 }}
-                className="pt-2"
+                transition={{ delay: navigationLinks.length * 0.05 }}
+                className="pt-4 mt-4 border-t border-white/5 space-y-3"
               >
-                <Link
-                  to="/contact"
-                  className="btn-primary block text-center text-sm py-3 rounded-xl"
-                >
-                  Essai Gratuit
-                </Link>
+                {isAuthenticated ? (
+                  <Link
+                    to="/profile"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-500 text-white font-bold"
+                  >
+                    <User className="h-5 w-5" />
+                    Mon Profil ({user?.fullName})
+                  </Link>
+                ) : (
+                  <>
+                    <Link
+                      to="/auth"
+                      className="flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-white/5 text-white font-bold border border-white/10"
+                    >
+                      <LogIn className="h-5 w-5" />
+                      Connexion
+                    </Link>
+                    <Link
+                      to="/auth"
+                      className="flex items-center justify-center gap-3 px-4 py-3 rounded-xl btn-primary font-bold"
+                    >
+                      <UserPlus className="h-5 w-5" />
+                      S'inscrire
+                    </Link>
+                  </>
+                )}
               </motion.div>
             </div>
           </motion.div>

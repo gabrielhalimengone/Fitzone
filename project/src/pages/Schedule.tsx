@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Clock, CalendarDays } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, CalendarDays, AlertCircle } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const courseColors: Record<string, string> = {
   'Cardio Intensif':    'from-orange-500 to-red-500',
@@ -13,7 +15,8 @@ const courseColors: Record<string, string> = {
 
 const Schedule = () => {
   const [currentWeek, setCurrentWeek] = useState(0);
-  const [reservedSlots, setReservedSlots] = useState<string[]>([]);
+  const { user, reserveSession, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   const getWeekDates = (weekOffset: number) => {
     const today = new Date();
@@ -33,59 +36,77 @@ const Schedule = () => {
 
   const schedule = {
     'Lundi': {
-      '07:00': { course: 'Cardio Intensif', duration: 45, available: true },
-      '09:00': { course: 'Yoga Flow', duration: 60, available: true },
-      '12:00': { course: 'HIIT Bootcamp', duration: 40, available: false },
-      '18:00': { course: 'CrossFit Power', duration: 50, available: true },
-      '19:00': { course: 'Pilates Core', duration: 45, available: true },
+      '07:00': { course: 'Cardio Intensif', duration: 45, available: true, coach: 'Marc Durand' },
+      '09:00': { course: 'Yoga Flow', duration: 60, available: true, coach: 'Sarah Lopez' },
+      '12:00': { course: 'HIIT Bootcamp', duration: 40, available: false, coach: 'Jean Rémy' },
+      '18:00': { course: 'CrossFit Power', duration: 50, available: true, coach: 'Marc Durand' },
+      '19:00': { course: 'Pilates Core', duration: 45, available: true, coach: 'Sarah Lopez' },
     },
     'Mardi': {
-      '06:00': { course: 'Musculation Débutant', duration: 55, available: true },
-      '08:00': { course: 'Yoga Flow', duration: 60, available: true },
-      '10:00': { course: 'Cardio Intensif', duration: 45, available: true },
-      '17:00': { course: 'CrossFit Power', duration: 50, available: false },
-      '19:00': { course: 'HIIT Bootcamp', duration: 40, available: true },
+      '06:00': { course: 'Musculation Débutant', duration: 55, available: true, coach: 'Jean Rémy' },
+      '08:00': { course: 'Yoga Flow', duration: 60, available: true, coach: 'Sarah Lopez' },
+      '10:00': { course: 'Cardio Intensif', duration: 45, available: true, coach: 'Marc Durand' },
+      '17:00': { course: 'CrossFit Power', duration: 50, available: false, coach: 'Marc Durand' },
+      '19:00': { course: 'HIIT Bootcamp', duration: 40, available: true, coach: 'Jean Rémy' },
     },
     'Mercredi': {
-      '07:00': { course: 'Pilates Core', duration: 45, available: true },
-      '09:00': { course: 'Cardio Intensif', duration: 45, available: true },
-      '12:00': { course: 'Yoga Flow', duration: 60, available: true },
-      '18:00': { course: 'Musculation Débutant', duration: 55, available: true },
-      '20:00': { course: 'HIIT Bootcamp', duration: 40, available: true },
+      '07:00': { course: 'Pilates Core', duration: 45, available: true, coach: 'Sarah Lopez' },
+      '09:00': { course: 'Cardio Intensif', duration: 45, available: true, coach: 'Marc Durand' },
+      '12:00': { course: 'Yoga Flow', duration: 60, available: true, coach: 'Sarah Lopez' },
+      '18:00': { course: 'Musculation Débutant', duration: 55, available: true, coach: 'Jean Rémy' },
+      '20:00': { course: 'HIIT Bootcamp', duration: 40, available: true, coach: 'Jean Rémy' },
     },
     'Jeudi': {
-      '06:00': { course: 'CrossFit Power', duration: 50, available: true },
-      '08:00': { course: 'Pilates Core', duration: 45, available: true },
-      '10:00': { course: 'Yoga Flow', duration: 60, available: false },
-      '17:00': { course: 'Cardio Intensif', duration: 45, available: true },
-      '19:00': { course: 'Musculation Débutant', duration: 55, available: true },
+      '06:00': { course: 'CrossFit Power', duration: 50, available: true, coach: 'Marc Durand' },
+      '08:00': { course: 'Pilates Core', duration: 45, available: true, coach: 'Sarah Lopez' },
+      '10:00': { course: 'Yoga Flow', duration: 60, available: false, coach: 'Sarah Lopez' },
+      '17:00': { course: 'Cardio Intensif', duration: 45, available: true, coach: 'Marc Durand' },
+      '19:00': { course: 'Musculation Débutant', duration: 55, available: true, coach: 'Jean Rémy' },
     },
     'Vendredi': {
-      '07:00': { course: 'HIIT Bootcamp', duration: 40, available: true },
-      '09:00': { course: 'Yoga Flow', duration: 60, available: true },
-      '12:00': { course: 'CrossFit Power', duration: 50, available: true },
-      '18:00': { course: 'Pilates Core', duration: 45, available: true },
-      '19:00': { course: 'Cardio Intensif', duration: 45, available: false },
+      '07:00': { course: 'HIIT Bootcamp', duration: 40, available: true, coach: 'Jean Rémy' },
+      '09:00': { course: 'Yoga Flow', duration: 60, available: true, coach: 'Sarah Lopez' },
+      '12:00': { course: 'CrossFit Power', duration: 50, available: true, coach: 'Marc Durand' },
+      '18:00': { course: 'Pilates Core', duration: 45, available: true, coach: 'Sarah Lopez' },
+      '19:00': { course: 'Cardio Intensif', duration: 45, available: false, coach: 'Marc Durand' },
     },
     'Samedi': {
-      '08:00': { course: 'Yoga Flow', duration: 60, available: true },
-      '10:00': { course: 'CrossFit Power', duration: 50, available: true },
-      '11:00': { course: 'HIIT Bootcamp', duration: 40, available: true },
-      '14:00': { course: 'Musculation Débutant', duration: 55, available: true },
-      '16:00': { course: 'Pilates Core', duration: 45, available: true },
+      '08:00': { course: 'Yoga Flow', duration: 60, available: true, coach: 'Sarah Lopez' },
+      '10:00': { course: 'CrossFit Power', duration: 50, available: true, coach: 'Marc Durand' },
+      '11:00': { course: 'HIIT Bootcamp', duration: 40, available: true, coach: 'Jean Rémy' },
+      '14:00': { course: 'Musculation Débutant', duration: 55, available: true, coach: 'Jean Rémy' },
+      '16:00': { course: 'Pilates Core', duration: 45, available: true, coach: 'Sarah Lopez' },
     },
     'Dimanche': {
-      '09:00': { course: 'Yoga Flow', duration: 60, available: true },
-      '10:00': { course: 'Cardio Intensif', duration: 45, available: true },
-      '11:00': { course: 'Pilates Core', duration: 45, available: false },
-      '17:00': { course: 'HIIT Bootcamp', duration: 40, available: true },
+      '09:00': { course: 'Yoga Flow', duration: 60, available: true, coach: 'Sarah Lopez' },
+      '10:00': { course: 'Cardio Intensif', duration: 45, available: true, coach: 'Marc Durand' },
+      '11:00': { course: 'Pilates Core', duration: 45, available: false, coach: 'Sarah Lopez' },
+      '17:00': { course: 'HIIT Bootcamp', duration: 40, available: true, coach: 'Jean Rémy' },
     },
   };
 
-  const handleBooking = (day: string, time: string, course: string) => {
-    const slotKey = `${day}-${time}-${course}`;
-    if (reservedSlots.includes(slotKey)) return;
-    setReservedSlots(prev => [...prev, slotKey]);
+  const handleBooking = (dayIndex: number, time: string, session: any) => {
+    if (!isAuthenticated) {
+      navigate('/auth', { state: { from: location } });
+      return;
+    }
+
+    const date = weekDates[dayIndex].toISOString().split('T')[0];
+    
+    // Check if already reserved
+    const isAlreadyReserved = user?.reservedSessions.some(
+      s => s.date === date && s.time === time && s.courseName === session.course
+    );
+
+    if (isAlreadyReserved) return;
+
+    reserveSession({
+      courseName: session.course,
+      coachName: session.coach,
+      date: date,
+      time: time,
+      duration: `${session.duration} min`
+    });
   };
 
   const isToday = (date: Date) =>
@@ -110,6 +131,12 @@ const Schedule = () => {
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
             Consultez nos horaires et réservez vos cours préférés en un clic.
           </p>
+          {!isAuthenticated && (
+            <div className="mt-6 inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-2 text-amber-400 text-sm">
+              <AlertCircle className="h-4 w-4" />
+              Connectez-vous pour pouvoir réserver vos séances.
+            </div>
+          )}
         </motion.div>
 
         {/* Week Navigation */}
@@ -189,8 +216,12 @@ const Schedule = () => {
                     {days.map((day, dayIndex) => {
                       const daySchedule = schedule[day as keyof typeof schedule];
                       const session = daySchedule?.[time as keyof typeof daySchedule];
-                      const slotKey = session ? `${day}-${time}-${session.course}` : '';
-                      const isReserved = reservedSlots.includes(slotKey);
+                      const dateStr = weekDates[dayIndex].toISOString().split('T')[0];
+                      
+                      const isReserved = user?.reservedSessions.some(
+                        s => s.date === dateStr && s.time === time && s.courseName === session?.course
+                      );
+                      
                       const colorClass = session ? (courseColors[session.course] || 'from-gray-500 to-gray-600') : '';
                       const todayDay = isToday(weekDates[dayIndex]);
 
@@ -206,10 +237,10 @@ const Schedule = () => {
                               <div className={`h-1 bg-gradient-to-r ${colorClass}`} />
                               <div className="p-2.5">
                                 <div className="text-xs font-semibold text-white mb-1 leading-tight">{session.course}</div>
-                                <div className="text-[10px] text-gray-400 mb-2">{session.duration} min</div>
+                                <div className="text-[10px] text-gray-400 mb-2">{session.duration} min — {session.coach}</div>
                                 {session.available ? (
                                   <button
-                                    onClick={() => handleBooking(day, time, session.course)}
+                                    onClick={() => handleBooking(dayIndex, time, session)}
                                     disabled={isReserved}
                                     className={`text-[10px] px-2.5 py-1 rounded-lg font-semibold transition-all duration-200 w-full ${
                                       isReserved
@@ -254,7 +285,7 @@ const Schedule = () => {
             <span className="text-sm text-gray-400">Cours complet</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-green-500" />
+            <div className="w-8 h-1.5 rounded-full bg-emerald-500" />
             <span className="text-sm text-gray-400">Réservé par vous</span>
           </div>
           <div className="ml-auto flex items-center gap-2">

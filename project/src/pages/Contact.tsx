@@ -2,6 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle } from 'lucide-react';
+import { api } from '../services/api';
 
 interface FormData {
   firstName: string;
@@ -22,8 +23,14 @@ const Contact = () => {
   } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
-    await new Promise(resolve => setTimeout(resolve, 1200));
-    console.log('Données du formulaire:', data);
+    // Send to our mock database / Google Sheets simulator
+    await api.submitContactForm(data);
+    
+    // If newsletter is checked, subscribe too
+    if (data.newsletter) {
+      api.subscribeNewsletter(data.email);
+    }
+    
     reset();
   };
 
@@ -183,9 +190,15 @@ const Contact = () => {
                   <CheckCircle className="h-10 w-10 text-emerald-400" />
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-3">Message envoyé !</h3>
-                <p className="text-gray-400 max-w-sm mx-auto">
-                  Nous avons bien reçu votre message et vous répondrons dans les plus brefs délais.
+                <p className="text-gray-400 max-w-sm mx-auto mb-6">
+                  Nous avons bien reçu votre message. Vos données ont été enregistrées (Simulation Google Sheets active).
                 </p>
+                <button 
+                  onClick={() => window.location.reload()}
+                  className="text-brand-400 font-bold hover:underline text-sm"
+                >
+                  Envoyer un autre message
+                </button>
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">

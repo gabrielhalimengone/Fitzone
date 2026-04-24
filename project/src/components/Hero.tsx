@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Play, Users, Star, Award, ChevronRight, X } from 'lucide-react';
+import { Play, Users, Star, Award, ChevronRight, X, Calendar, MessageSquare, CheckCircle2 } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import gymVideo from '../assets/gym.mp4';
 
@@ -59,6 +59,17 @@ const FloatingShape = ({ className }: { className: string }) => (
 
 const Hero = () => {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [activeForm, setActiveForm] = useState<'trial' | 'consultation' | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitted(true);
+    setTimeout(() => {
+      setIsSubmitted(false);
+      setActiveForm(null);
+    }, 3000);
+  };
 
   return (
     <section className="relative flex items-center bg-dark-900 overflow-hidden pt-24 pb-6 lg:pt-24 lg:pb-8">
@@ -119,12 +130,12 @@ const Hero = () => {
               sur-mesure avec nos coachs experts certifiés. Votre transformation commence aujourd'hui.
             </p>
 
-            <div className="flex flex-wrap items-center gap-6 mb-8">
+            <div className="flex flex-wrap items-center gap-4 mb-8">
               <Link
-                to="/contact"
-                className="btn-primary flex items-center justify-center gap-2 text-base"
+                to="/subscriptions"
+                className="btn-primary flex items-center justify-center gap-2 text-base px-8 py-4"
               >
-                Commencer Maintenant
+                Démarrer mon parcours
                 <ChevronRight className="h-5 w-5" />
               </Link>
               <button 
@@ -135,6 +146,23 @@ const Hero = () => {
                   <Play className="h-4 w-4 fill-current ml-0.5" />
                 </span>
                 Voir la Vidéo
+              </button>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-4 mb-12">
+              <button 
+                onClick={() => setActiveForm('trial')}
+                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-bold hover:bg-brand-500 hover:border-brand-500 transition-all duration-300"
+              >
+                <Calendar className="h-4 w-4" />
+                Essai Gratuit
+              </button>
+              <button 
+                onClick={() => setActiveForm('consultation')}
+                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-bold hover:bg-brand-500 hover:border-brand-500 transition-all duration-300"
+              >
+                <MessageSquare className="h-4 w-4" />
+                Consultation Gratuite
               </button>
             </div>
 
@@ -214,6 +242,92 @@ const Hero = () => {
                   className="w-full h-full object-contain"
                 />
               </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Form Modal */}
+      <AnimatePresence>
+        {activeForm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+          >
+            <div className="absolute inset-0" onClick={() => setActiveForm(null)} />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-lg dark-card rounded-[2.5rem] p-8 md:p-10 shadow-2xl border-white/10"
+            >
+              <button
+                onClick={() => setActiveForm(null)}
+                className="absolute top-6 right-6 p-2 text-gray-500 hover:text-white transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
+
+              {isSubmitted ? (
+                <div className="text-center py-10">
+                  <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <CheckCircle2 className="h-10 w-10 text-emerald-500" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-4">Demande Envoyée !</h3>
+                  <p className="text-gray-400">
+                    Un membre de notre équipe vous contactera dans les plus brefs délais pour confirmer votre {activeForm === 'trial' ? 'essai' : 'consultation'}.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <h2 className="text-3xl font-black text-white mb-2">
+                    {activeForm === 'trial' ? 'Essai Gratuit' : 'Consultation Gratuite'}
+                  </h2>
+                  <p className="text-gray-400 mb-8">
+                    {activeForm === 'trial' 
+                      ? 'Venez tester nos équipements et l\'ambiance du club pendant une séance complète.' 
+                      : 'Discutez avec un expert pour définir vos objectifs et votre plan d\'action.'}
+                  </p>
+
+                  <form onSubmit={handleFormSubmit} className="space-y-5">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Nom Complet</label>
+                      <input 
+                        required 
+                        type="text" 
+                        placeholder="Jean Dupont"
+                        className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Email</label>
+                      <input 
+                        required 
+                        type="email" 
+                        placeholder="jean@example.com"
+                        className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Téléphone</label>
+                      <input 
+                        required 
+                        type="tel" 
+                        placeholder="06 12 34 56 78"
+                        className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all"
+                      />
+                    </div>
+                    <button 
+                      type="submit"
+                      className="w-full btn-primary py-4 text-lg font-bold mt-4"
+                    >
+                      Confirmer ma demande
+                    </button>
+                  </form>
+                </>
+              )}
             </motion.div>
           </motion.div>
         )}

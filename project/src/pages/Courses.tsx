@@ -1,16 +1,41 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { Clock, Users, Star, Filter, CheckCircle } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Clock, Users, Star, Filter, CheckCircle, AlertCircle } from 'lucide-react';
 
 const Courses = () => {
   const [selectedLevel, setSelectedLevel] = useState('all');
   const [selectedType, setSelectedType] = useState('all');
-  const [reservedCourses, setReservedCourses] = useState<number[]>([]);
+  const { user, reserveSession, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleReservation = (courseId: number, courseName: string) => {
-    if (reservedCourses.includes(courseId)) return;
-    setReservedCourses(prev => [...prev, courseId]);
+  const handleReservation = (course: any) => {
+    if (!isAuthenticated) {
+      navigate('/auth', { state: { from: location } });
+      return;
+    }
+
+    // Default to tomorrow for simplicity in this view
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const dateStr = tomorrow.toISOString().split('T')[0];
+    
+    // Check if already reserved
+    const isAlreadyReserved = user?.reservedSessions.some(
+      s => s.courseName === course.name && s.date === dateStr
+    );
+
+    if (isAlreadyReserved) return;
+
+    reserveSession({
+      courseName: course.name,
+      coachName: course.defaultCoach,
+      date: dateStr,
+      time: '18:00',
+      duration: course.duration
+    });
   };
 
   const courses = [
@@ -23,6 +48,7 @@ const Courses = () => {
       capacity: 15,
       rating: 4.8,
       price: '25€',
+      defaultCoach: 'Marc Durand',
       image: 'https://images.pexels.com/photos/1552106/pexels-photo-1552106.jpeg',
       description: 'Brûlez un maximum de calories avec ce cours cardio haute intensité.',
       color: 'from-orange-500 to-red-500',
@@ -36,6 +62,7 @@ const Courses = () => {
       capacity: 20,
       rating: 4.9,
       price: '20€',
+      defaultCoach: 'Sarah Lopez',
       image: 'https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg',
       description: 'Détendez-vous et renforcez votre flexibilité avec ce yoga dynamique.',
       color: 'from-purple-500 to-indigo-500',
@@ -49,6 +76,7 @@ const Courses = () => {
       capacity: 12,
       rating: 4.7,
       price: '30€',
+      defaultCoach: 'Marc Durand',
       image: 'https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg',
       description: 'Entraînement fonctionnel intensif pour développer force et endurance.',
       color: 'from-red-500 to-pink-500',
@@ -62,6 +90,7 @@ const Courses = () => {
       capacity: 18,
       rating: 4.6,
       price: '22€',
+      defaultCoach: 'Sarah Lopez',
       image: 'https://images.pexels.com/photos/3823039/pexels-photo-3823039.jpeg',
       description: 'Renforcez votre centre et améliorez votre posture avec le Pilates.',
       color: 'from-teal-500 to-cyan-500',
@@ -75,6 +104,7 @@ const Courses = () => {
       capacity: 16,
       rating: 4.8,
       price: '28€',
+      defaultCoach: 'Jean Rémy',
       image: 'https://images.pexels.com/photos/1552103/pexels-photo-1552103.jpeg',
       description: "Entraînement par intervalles pour un maximum d'efficacité.",
       color: 'from-yellow-500 to-orange-500',
@@ -88,6 +118,7 @@ const Courses = () => {
       capacity: 10,
       rating: 4.5,
       price: '25€',
+      defaultCoach: 'Jean Rémy',
       image: 'https://images.pexels.com/photos/1552252/pexels-photo-1552252.jpeg',
       description: 'Initiation à la musculation avec techniques et sécurité.',
       color: 'from-emerald-500 to-green-500',
@@ -136,6 +167,12 @@ const Courses = () => {
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
             Découvrez notre large gamme de cours adaptés à tous les niveaux et objectifs.
           </p>
+          {!isAuthenticated && (
+            <div className="mt-6 inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-2 text-amber-400 text-sm">
+              <AlertCircle className="h-4 w-4" />
+              Connectez-vous pour pouvoir réserver vos séances.
+            </div>
+          )}
         </motion.div>
 
         {/* Filters */}
@@ -194,7 +231,14 @@ const Courses = () => {
         <AnimatePresence mode="popLayout">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredCourses.map((course, index) => {
-              const isReserved = reservedCourses.includes(course.id);
+              const tomorrow = new Date();
+              tomorrow.setDate(tomorrow.getDate() + 1);
+              const dateStr = tomorrow.toISOString().split('T')[0];
+              
+              const isReserved = user?.reservedSessions.some(
+                s => s.courseName === course.name && s.date === dateStr
+              );
+              
               const lvl = levelConfig[course.level as keyof typeof levelConfig];
               return (
                 <motion.div
@@ -255,7 +299,7 @@ const Courses = () => {
                     </div>
 
                     <button
-                      onClick={() => handleReservation(course.id, course.name)}
+                      onClick={() => handleReservation(course)}
                       disabled={isReserved}
                       className={`w-full py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 ${
                         isReserved
@@ -266,7 +310,7 @@ const Courses = () => {
                       {isReserved ? (
                         <>
                           <CheckCircle className="h-4 w-4" />
-                          Réservé avec succès
+                          Réservé pour demain
                         </>
                       ) : (
                         'Réserver maintenant'
