@@ -91,14 +91,14 @@ const Navbar = () => {
               ) : (
                 <>
                   <Link
-                    to="/auth"
+                    to="/login"
                     className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-gray-300 hover:text-white transition-all"
                   >
                     <LogIn className="h-4 w-4" />
                     Connexion
                   </Link>
                   <Link
-                    to="/auth"
+                    to="/signup"
                     className="btn-primary text-xs px-5 py-2.5 rounded-xl flex items-center gap-2"
                   >
                     <UserPlus className="h-4 w-4" />
@@ -180,14 +180,14 @@ const Navbar = () => {
                 ) : (
                   <>
                     <Link
-                      to="/auth"
+                      to="/login"
                       className="flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-white/5 text-white font-bold border border-white/10"
                     >
                       <LogIn className="h-5 w-5" />
                       Connexion
                     </Link>
                     <Link
-                      to="/auth"
+                      to="/signup"
                       className="flex items-center justify-center gap-3 px-4 py-3 rounded-xl btn-primary font-bold"
                     >
                       <UserPlus className="h-5 w-5" />

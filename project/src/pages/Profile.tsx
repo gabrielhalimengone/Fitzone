@@ -47,7 +47,7 @@ const Profile = () => {
 
   if (!user) {
     React.useEffect(() => {
-      navigate('/auth');
+      navigate('/login');
     }, [user, navigate]);
     return null;
   }

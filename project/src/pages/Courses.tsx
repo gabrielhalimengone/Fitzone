@@ -13,7 +13,7 @@ const Courses = () => {
 
   const handleReservation = (course: any) => {
     if (!isAuthenticated) {
-      navigate('/auth', { state: { from: location } });
+      navigate('/login', { state: { from: location } });
       return;
     }
 

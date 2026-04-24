@@ -1,39 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, User, Phone, ArrowRight, Eye, EyeOff, Loader2, LogIn, UserPlus, AlertCircle } from 'lucide-react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { Mail, Lock, User, Phone, ArrowRight, Eye, EyeOff, Loader2, LogIn, UserPlus, AlertCircle, ArrowLeft, CheckCircle2 } from 'lucide-react';
 
-const Auth = () => {
-  const [isLogin, setIsLogin] = useState(true);
+interface AuthProps {
+  mode?: 'login' | 'signup' | 'forgot';
+}
+
+const Auth: React.FC<AuthProps> = ({ mode: initialMode }) => {
+  const [mode, setMode] = useState<'login' | 'signup' | 'forgot'>(initialMode || 'login');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const { login, signup } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as any)?.from?.pathname || '/profile';
 
+  // Sync state with prop if it changes
+  useEffect(() => {
+    if (initialMode) {
+      setMode(initialMode);
+      setError(null);
+      setSuccess(null);
+    }
+  }, [initialMode]);
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    reset
   } = useForm();
 
   const onSubmit = async (data: any) => {
     setError(null);
+    setSuccess(null);
     try {
-      if (isLogin) {
+      if (mode === 'login') {
         await login(data.email, data.password);
-      } else {
-        // Map firstName/lastName to fullName for the DB
+        navigate(from, { replace: true });
+      } else if (mode === 'signup') {
         const signupData = {
           ...data,
           fullName: `${data.firstName} ${data.lastName}`
         };
         await signup(signupData);
+        navigate(from, { replace: true });
+      } else if (mode === 'forgot') {
+        // Simulate forgot password
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        setSuccess(`Un lien de réinitialisation a été envoyé à ${data.email}`);
+        reset();
       }
-      navigate(from, { replace: true });
     } catch (err: any) {
       setError(err.message || 'Une erreur est survenue');
       console.error(err);
@@ -46,7 +67,7 @@ const Auth = () => {
     }`;
 
   return (
-    <div className="min-h-[calc(100-80px)] flex items-center justify-center py-20 px-4">
+    <div className="min-h-[calc(100vh-80px)] flex items-center justify-center py-20 px-4">
       {/* Background elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-1/4 -left-20 w-96 h-96 bg-brand-500/20 rounded-full blur-3xl" />
@@ -62,17 +83,19 @@ const Auth = () => {
           {/* Header */}
           <div className="text-center mb-10">
             <h1 className="text-3xl font-black text-white mb-3">
-              {isLogin ? 'Bon retour !' : 'Rejoignez-nous'}
+              {mode === 'login' && 'Bon retour !'}
+              {mode === 'signup' && 'Rejoignez-nous'}
+              {mode === 'forgot' && 'Mot de passe oublié'}
             </h1>
             <p className="text-gray-400">
-              {isLogin 
-                ? 'Connectez-vous pour accéder à votre espace.' 
-                : 'Commencez votre transformation dès aujourd\'hui.'}
+              {mode === 'login' && 'Connectez-vous pour accéder à votre espace.'}
+              {mode === 'signup' && 'Commencez votre transformation dès aujourd\'hui.'}
+              {mode === 'forgot' && 'Entrez votre email pour réinitialiser votre mot de passe.'}
             </p>
           </div>
 
-          {/* Error Message */}
-          <AnimatePresence>
+          {/* Messages */}
+          <AnimatePresence mode="wait">
             {error && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
@@ -84,12 +107,23 @@ const Auth = () => {
                 <p>{error}</p>
               </motion.div>
             )}
+            {success && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-3 text-emerald-400 text-sm"
+              >
+                <CheckCircle2 className="h-5 w-5 flex-shrink-0" />
+                <p>{success}</p>
+              </motion.div>
+            )}
           </AnimatePresence>
 
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <AnimatePresence mode="wait">
-              {!isLogin && (
+              {mode === 'signup' && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
@@ -102,7 +136,7 @@ const Auth = () => {
                       <input
                         type="text"
                         placeholder="Prénom"
-                        {...register('firstName', { required: !isLogin })}
+                        {...register('firstName', { required: mode === 'signup' })}
                         className={inputClass(!!errors.firstName)}
                       />
                     </div>
@@ -110,7 +144,7 @@ const Auth = () => {
                       <input
                         type="text"
                         placeholder="Nom"
-                        {...register('lastName', { required: !isLogin })}
+                        {...register('lastName', { required: mode === 'signup' })}
                         className={inputClass(!!errors.lastName)}
                       />
                     </div>
@@ -120,7 +154,7 @@ const Auth = () => {
                     <input
                       type="tel"
                       placeholder="Téléphone"
-                      {...register('phone', { required: !isLogin })}
+                      {...register('phone', { required: mode === 'signup' })}
                       className={inputClass(!!errors.phone)}
                     />
                   </div>
@@ -142,32 +176,34 @@ const Auth = () => {
               {errors.email && <p className="text-xs text-red-400 mt-1.5 ml-1">{errors.email.message as string}</p>}
             </div>
 
-            <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Mot de passe"
-                {...register('password', { 
-                  required: 'Mot de passe requis',
-                  minLength: { value: 6, message: '6 caractères minimum' }
-                })}
-                className={inputClass(!!errors.password)}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
-              >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-              </button>
-              {errors.password && <p className="text-xs text-red-400 mt-1.5 ml-1">{errors.password.message as string}</p>}
-            </div>
-
-            {isLogin && (
-              <div className="flex justify-end">
-                <button type="button" className="text-xs text-brand-400 hover:text-brand-300 font-semibold">
-                  Mot de passe oublié ?
+            {mode !== 'forgot' && (
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Mot de passe"
+                  {...register('password', { 
+                    required: 'Mot de passe requis',
+                    minLength: { value: 6, message: '6 caractères minimum' }
+                  })}
+                  className={inputClass(!!errors.password)}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                >
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
+                {errors.password && <p className="text-xs text-red-400 mt-1.5 ml-1">{errors.password.message as string}</p>}
+              </div>
+            )}
+
+            {mode === 'login' && (
+              <div className="flex justify-end">
+                <Link to="/forgot-password" size="sm" className="text-xs text-brand-400 hover:text-brand-300 font-semibold">
+                  Mot de passe oublié ?
+                </Link>
               </div>
             )}
 
@@ -180,8 +216,12 @@ const Auth = () => {
                 <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
                 <>
-                  {isLogin ? <LogIn className="h-5 w-5" /> : <UserPlus className="h-5 w-5" />}
-                  {isLogin ? 'Se Connecter' : 'Créer un Compte'}
+                  {mode === 'login' && <LogIn className="h-5 w-5" />}
+                  {mode === 'signup' && <UserPlus className="h-5 w-5" />}
+                  {mode === 'forgot' && <Mail className="h-5 w-5" />}
+                  {mode === 'login' && 'Se Connecter'}
+                  {mode === 'signup' && 'Créer un Compte'}
+                  {mode === 'forgot' && 'Réinitialiser'}
                 </>
               )}
             </button>
@@ -189,15 +229,25 @@ const Auth = () => {
 
           {/* Switch */}
           <div className="mt-8 pt-8 border-t border-white/5 text-center">
-            <p className="text-gray-400 text-sm">
-              {isLogin ? 'Pas encore de compte ?' : 'Déjà un compte ?'}
-              <button
-                onClick={() => setIsLogin(!isLogin)}
-                className="ml-2 text-brand-400 hover:text-brand-300 font-bold underline underline-offset-4"
+            {mode === 'forgot' ? (
+              <Link
+                to="/login"
+                className="text-gray-400 hover:text-white text-sm font-bold flex items-center justify-center gap-2"
               >
-                {isLogin ? 'S\'inscrire' : 'Se connecter'}
-              </button>
-            </p>
+                <ArrowLeft className="h-4 w-4" />
+                Retour à la connexion
+              </Link>
+            ) : (
+              <p className="text-gray-400 text-sm">
+                {mode === 'login' ? 'Pas encore de compte ?' : 'Déjà un compte ?'}
+                <Link
+                  to={mode === 'login' ? '/signup' : '/login'}
+                  className="ml-2 text-brand-400 hover:text-brand-300 font-bold underline underline-offset-4"
+                >
+                  {mode === 'login' ? 'S\'inscrire' : 'Se connecter'}
+                </Link>
+              </p>
+            )}
           </div>
         </div>
       </motion.div>

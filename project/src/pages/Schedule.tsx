@@ -87,7 +87,7 @@ const Schedule = () => {
 
   const handleBooking = (dayIndex: number, time: string, session: any) => {
     if (!isAuthenticated) {
-      navigate('/auth', { state: { from: location } });
+      navigate('/login', { state: { from: location } });
       return;
     }
 

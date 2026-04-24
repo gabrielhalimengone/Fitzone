@@ -30,6 +30,9 @@ function App() {
               <Route path="/testimonials" element={<Testimonials />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/subscriptions" element={<Subscriptions />} />
+              <Route path="/login" element={<Auth mode="login" />} />
+              <Route path="/signup" element={<Auth mode="signup" />} />
+              <Route path="/forgot-password" element={<Auth mode="forgot" />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/profile" element={<Profile />} />
             </Routes>
