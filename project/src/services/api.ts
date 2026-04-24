@@ -22,8 +22,8 @@ const initialDB: DBStructure = {
       password: 'password123',
       phone: '06 12 34 56 78',
       plan: 'pro',
-      joinDate: '2024-01-15',
-      nextBillingDate: '2024-05-15',
+      joinDate: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      nextBillingDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       coach: {
         name: 'Marc Durand',
         specialty: 'Force & Conditionnement',
@@ -37,7 +37,7 @@ const initialDB: DBStructure = {
       userId: '1',
       courseName: 'CrossFit Power',
       coachName: 'Marc Durand',
-      date: '2024-04-23',
+      date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       time: '18:00',
       duration: '60 min'
     }
@@ -78,7 +78,7 @@ class DemoDB {
     return null;
   }
 
-  signup(userData: any) {
+  async signup(userData: any) {
     const newUser = {
       ...userData,
       id: Math.random().toString(36).substr(2, 9),
@@ -89,6 +89,24 @@ class DemoDB {
     this.data.users.push(newUser);
     this.data.currentUserId = newUser.id;
     this.save();
+
+    // Envoi vers Sheet2 pour les inscriptions
+    try {
+      const GOOGLE_SCRIPT_URL_SHEET2 = import.meta.env.VITE_GOOGLE_SCRIPT_URL_SHEET2;
+      await fetch(GOOGLE_SCRIPT_URL_SHEET2, {
+        method: 'POST',
+        mode: 'no-cors',
+        cache: 'no-cache',
+        body: JSON.stringify({
+          ...newUser,
+          source: 'signup_form',
+          timestamp: new Date().toISOString()
+        }),
+      });
+    } catch (e) {
+      console.error('Erreur envoi Sheet2:', e);
+    }
+
     return newUser;
   }
 
@@ -99,8 +117,21 @@ class DemoDB {
 
   getCurrentUser() {
     if (!this.data.currentUserId) return null;
-    const user = this.data.users.find(u => u.id === this.data.currentUserId);
-    if (!user) return null;
+    const index = this.data.users.findIndex(u => u.id === this.data.currentUserId);
+    if (index === -1) return null;
+
+    let user = this.data.users[index];
+
+    // Auto-réparation de la date de facturation si elle est dans le passé
+    const now = new Date();
+    const billingDate = new Date(user.nextBillingDate);
+    if (billingDate < now) {
+      const nextMonth = new Date();
+      nextMonth.setDate(now.getDate() + 30);
+      user.nextBillingDate = nextMonth.toISOString().split('T')[0];
+      this.data.users[index] = user;
+      this.save();
+    }
 
     // Join with sessions
     const userSessions = this.data.sessions.filter(s => s.userId === user.id);
@@ -111,6 +142,11 @@ class DemoDB {
   updateUser(userId: string, updates: any) {
     const index = this.data.users.findIndex(u => u.id === userId);
     if (index !== -1) {
+      // Si on change de forfait, on repart sur un cycle de 30 jours
+      if (updates.plan) {
+        updates.nextBillingDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      }
+      
       this.data.users[index] = { ...this.data.users[index], ...updates };
       this.save();
       return this.data.users[index];
@@ -155,7 +191,7 @@ class DemoDB {
     this.save();
 
     try {
-      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzesm9oPzxHFtdTV2jXmB_ev57rFb2tBffDq9yl0wzmfiBCZPIrHb0KmSre1AnlWpWfcg/exec';
+      const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL;
 
       await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',

@@ -70,14 +70,14 @@ const Profile = () => {
   };
 
   const stats = [
-    { label: 'Séances réservées', value: user.reservedSessions.length.toString(), icon: Dumbbell, color: 'text-brand-400' },
-    { label: 'Minutes prévues', value: (user.reservedSessions.length * 45).toString(), icon: Clock, color: 'text-emerald-400' },
-    { label: 'Niveau Forfait', value: user.plan.toUpperCase(), icon: CheckCircle2, color: 'text-blue-400' },
+    { label: 'Séances réservées', value: user.reservedSessions.length.toString(), icon: Dumbbell, color: 'text-brand-500' },
+    { label: 'Minutes prévues', value: (user.reservedSessions.length * 45).toString(), icon: Clock, color: 'text-brand-500' },
+    { label: 'Niveau Forfait', value: user.plan.toUpperCase(), icon: CheckCircle2, color: 'text-brand-500' },
   ];
 
   const inputClass = (hasError: boolean) =>
-    `w-full px-4 py-3 bg-white/5 border rounded-xl text-white placeholder-gray-400 text-sm outline-none transition-all duration-200 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 ${
-      hasError ? 'border-red-500/50 bg-red-500/5' : 'border-white/8 hover:border-white/15'
+    `w-full px-4 py-3 bg-dark-500 border rounded-xl text-white placeholder-dark-100 text-sm outline-none transition-all duration-200 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 ${
+      hasError ? 'border-red-500/50 bg-red-500/5' : 'border-dark-200 hover:border-dark-300'
     }`;
 
   return (
@@ -89,10 +89,10 @@ const Profile = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <h1 className="text-4xl font-black text-white mb-2">
-              Salut, <span className="text-gradient">{user.fullName.split(' ')[0]}</span> 👋
+            <h1 className="text-4xl font-black text-white mb-2 uppercase tracking-tighter leading-none">
+              Salut, <span className="text-brand-500">{user.fullName.split(' ')[0]}</span>
             </h1>
-            <p className="text-gray-400">Voici un aperçu de votre activité et de votre abonnement.</p>
+            <p className="text-dark-100 font-bold uppercase tracking-widest text-xs">Tableau de bord membre FitZone</p>
           </motion.div>
 
           <motion.div
@@ -102,25 +102,17 @@ const Profile = () => {
           >
             <button 
               onClick={() => { reset(); setIsEditing(true); }}
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 transition-all font-bold"
+              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-dark-800 border border-dark-300 text-white hover:bg-brand-500 hover:border-brand-500 transition-all font-black text-xs uppercase tracking-widest"
             >
-              <Settings className="h-5 w-5" />
-              Modifier Profil
-            </button>
-            <button 
-              onClick={() => { if(window.confirm('Réinitialiser la base de données de démo ?')) resetDatabase(); }}
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 hover:bg-amber-500 hover:text-white transition-all font-bold"
-              title="Réinitialiser pour la démo"
-            >
-              <AlertCircle className="h-5 w-5" />
-              Reset DB
+              <Settings className="h-4 w-4" />
+              Modifier
             </button>
             <button 
               onClick={handleLogout}
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition-all font-bold"
+              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-dark-800 border border-dark-300 text-red-500 hover:bg-red-500 hover:text-white transition-all font-black text-xs uppercase tracking-widest"
             >
-              <LogOut className="h-5 w-5" />
-              Déconnexion
+              <LogOut className="h-4 w-4" />
+              Quitter
             </button>
           </motion.div>
         </div>
@@ -132,27 +124,23 @@ const Profile = () => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="dark-card rounded-3xl p-8 border-white/5 relative overflow-hidden"
+              className="bg-dark-800 border border-dark-300 rounded-[2.5rem] p-8 relative overflow-hidden"
             >
-              <div className="absolute top-0 right-0 p-6 opacity-10">
-                <UserIcon className="h-24 w-24" />
-              </div>
               <div className="relative z-10">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-brand-500 to-red-600 flex items-center justify-center text-3xl font-black text-white mb-6 shadow-lg shadow-brand-500/20">
+                <div className="w-20 h-20 rounded-2xl bg-brand-500 flex items-center justify-center text-3xl font-black text-white mb-6 shadow-xl shadow-brand-500/20">
                   {user.fullName.charAt(0)}
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-1">{user.fullName}</h2>
-                <p className="text-gray-400 text-sm mb-6">{user.email}</p>
-                {user.phone && <p className="text-gray-500 text-xs mb-6 flex items-center gap-2"><Phone className="h-3 w-3" /> {user.phone}</p>}
+                <h2 className="text-2xl font-black text-white mb-1 uppercase tracking-tight">{user.fullName}</h2>
+                <p className="text-dark-100 text-sm mb-6 font-medium">{user.email}</p>
                 
-                <div className="space-y-4 pt-6 border-t border-white/5">
-                  <div className="flex items-center gap-3 text-sm text-gray-300">
-                    <Calendar className="h-4 w-4 text-brand-400" />
-                    Membre depuis {user.joinDate}
+                <div className="space-y-4 pt-6 border-t border-dark-400">
+                  <div className="flex items-center gap-3 text-xs font-bold text-white uppercase tracking-widest">
+                    <Calendar className="h-4 w-4 text-brand-500" />
+                    Depuis {user.joinDate}
                   </div>
-                  <div className="flex items-center gap-3 text-sm text-gray-300">
-                    <MapPin className="h-4 w-4 text-brand-400" />
-                    FitZone Paris Centre
+                  <div className="flex items-center gap-3 text-xs font-bold text-white uppercase tracking-widest">
+                    <MapPin className="h-4 w-4 text-brand-500" />
+                    Paris Centre
                   </div>
                 </div>
               </div>
@@ -166,13 +154,13 @@ const Profile = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 * i }}
-                  className="dark-card rounded-2xl p-5 border-white/5 flex items-center gap-5"
+                  className="bg-dark-800 border border-dark-300 rounded-2xl p-5 flex items-center gap-5"
                 >
-                  <div className={`p-3 rounded-xl bg-white/5 ${stat.color}`}>
-                    <stat.icon className="h-6 w-6" />
+                  <div className={`p-3 rounded-xl bg-dark-700`}>
+                    <stat.icon className={`h-6 w-6 ${stat.color}`} />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 uppercase tracking-wider font-bold">{stat.label}</p>
+                    <p className="text-[10px] text-dark-100 uppercase tracking-widest font-black mb-1">{stat.label}</p>
                     <p className="text-2xl font-black text-white">{stat.value}</p>
                   </div>
                 </motion.div>
@@ -182,82 +170,51 @@ const Profile = () => {
 
           {/* Middle & Right Column — Dashboard Content */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Subscription & Coach Row */}
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Subscription Card */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="dark-card rounded-3xl p-8 border-white/5 bg-gradient-to-br from-white/[0.03] to-transparent"
+            {/* Subscription Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="bg-dark-800 border border-dark-300 rounded-[2.5rem] p-8"
+            >
+              <div className="flex items-center justify-between mb-8">
+                <div className="p-3 rounded-2xl bg-dark-700 border border-dark-400">
+                  <CreditCard className="h-6 w-6 text-brand-500" />
+                </div>
+                <span className="px-4 py-1 rounded-full bg-brand-500 text-white text-[10px] font-black tracking-widest uppercase">ABONNÉ</span>
+              </div>
+              <h3 className="text-3xl font-black text-white mb-1 uppercase tracking-tighter">Forfait {user.plan}</h3>
+              <p className="text-dark-100 font-bold text-sm mb-8">Votre accès illimité à toutes les zones FitZone.</p>
+              
+              <div className="space-y-4 mb-10">
+                <div className="flex justify-between items-end">
+                  <span className="text-[10px] text-dark-100 font-black uppercase tracking-widest">Renouvellement</span>
+                  <span className="text-sm text-white font-black">{user.nextBillingDate}</span>
+                </div>
+                <div className="w-full h-3 bg-dark-700 rounded-full overflow-hidden p-0.5">
+                  <div className="w-[75%] h-full bg-brand-500 rounded-full" />
+                </div>
+              </div>
+              
+              <Link 
+                to="/subscriptions"
+                className="inline-block px-8 py-4 rounded-xl bg-white text-dark-900 text-xs font-black uppercase tracking-widest hover:bg-brand-500 hover:text-white transition-all"
               >
-                <div className="flex items-center justify-between mb-8">
-                  <div className="p-3 rounded-2xl bg-brand-500/10 border border-brand-500/20">
-                    <CreditCard className="h-6 w-6 text-brand-400" />
-                  </div>
-                  <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold border border-emerald-500/20">ACTIF</span>
-                </div>
-                <h3 className="text-lg font-bold text-white mb-1 uppercase tracking-tight">Forfait {user.plan}</h3>
-                <p className="text-gray-400 text-sm mb-6">Accès illimité Premium</p>
-                
-                <div className="space-y-4 mb-8">
-                  <div className="flex justify-between items-end">
-                    <span className="text-xs text-gray-500 font-bold uppercase">Prochain prélèvement</span>
-                    <span className="text-sm text-white font-medium">{user.nextBillingDate}</span>
-                  </div>
-                  <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
-                    <div className="w-[70%] h-full bg-gradient-to-r from-brand-500 to-red-500" />
-                  </div>
-                </div>
-                
-                <Link 
-                  to="/subscriptions"
-                  className="w-full py-3 rounded-xl border border-white/10 text-sm font-bold text-white hover:bg-white/5 transition-all block text-center"
-                >
-                  Gérer l'abonnement
-                </Link>
-              </motion.div>
-
-              {/* Coach Card */}
-              {user.coach && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="dark-card rounded-3xl p-8 border-white/5"
-                >
-                  <div className="flex items-center justify-between mb-8">
-                    <div className="p-3 rounded-2xl bg-purple-500/10 border border-purple-500/20">
-                      <UserIcon className="h-6 w-6 text-purple-400" />
-                    </div>
-                    <button className="text-xs text-brand-400 font-bold hover:underline">CONTACTER</button>
-                  </div>
-                  <div className="flex items-center gap-4 mb-6">
-                    <img src={user.coach.image} alt={user.coach.name} className="w-14 h-14 rounded-xl object-cover border border-white/10" />
-                    <div>
-                      <h3 className="text-lg font-bold text-white">{user.coach.name}</h3>
-                      <p className="text-gray-400 text-xs">{user.coach.specialty}</p>
-                    </div>
-                  </div>
-                  <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-                    <p className="text-xs text-gray-400 mb-1">Prochain rendez-vous</p>
-                    <p className="text-sm text-white font-bold">Lundi 22 Avril — 14:00</p>
-                  </div>
-                </motion.div>
-              )}
-            </div>
+                Gérer Forfait
+              </Link>
+            </motion.div>
 
             {/* Reserved Sessions */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="dark-card rounded-3xl p-8 border-white/5"
+              className="bg-dark-800 border border-dark-300 rounded-[2.5rem] p-8"
             >
               <div className="flex items-center justify-between mb-8">
-                <h3 className="text-xl font-bold text-white">Séances Réservées</h3>
-                <Link to="/schedule" className="text-sm text-brand-400 font-bold hover:underline flex items-center gap-1">
-                  Réserver plus <ChevronRight className="h-4 w-4" />
+                <h3 className="text-2xl font-black text-white uppercase tracking-tight">Vos Prochaines Séances</h3>
+                <Link to="/schedule" className="text-xs text-brand-500 font-black uppercase tracking-widest hover:underline flex items-center gap-2">
+                  Plus <ChevronRight className="h-4 w-4" />
                 </Link>
               </div>
 
@@ -271,29 +228,28 @@ const Profile = () => {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, x: 20 }}
-                        className="flex items-center justify-between p-5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-white/10 transition-all group"
+                        className="flex items-center justify-between p-6 rounded-2xl bg-dark-700 border border-dark-400 hover:border-brand-500 transition-all group"
                       >
-                        <div className="flex items-center gap-5">
-                          <div className="w-12 h-12 rounded-xl bg-brand-500/10 flex flex-col items-center justify-center border border-brand-500/20">
-                            <span className="text-[10px] font-black text-brand-400 uppercase leading-none mb-1">
+                        <div className="flex items-center gap-6">
+                          <div className="w-14 h-14 rounded-2xl bg-brand-500 flex flex-col items-center justify-center shadow-lg shadow-brand-500/10">
+                            <span className="text-[10px] font-black text-white/80 uppercase leading-none mb-1">
                               {new Date(session.date).toLocaleDateString('fr-FR', { month: 'short' }).substring(0, 3)}
                             </span>
-                            <span className="text-lg font-black text-white leading-none">
+                            <span className="text-xl font-black text-white leading-none">
                               {session.date.split('-')[2]}
                             </span>
                           </div>
                           <div>
-                            <h4 className="font-bold text-white group-hover:text-brand-400 transition-colors">{session.courseName}</h4>
-                            <p className="text-xs text-gray-500 flex items-center gap-3 mt-1">
-                              <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {session.time} ({session.duration})</span>
-                              <span className="flex items-center gap-1"><UserIcon className="h-3.5 w-3.5" /> {session.coachName}</span>
-                            </p>
+                            <h4 className="font-black text-white text-lg uppercase tracking-tight">{session.courseName}</h4>
+                            <div className="flex items-center gap-4 mt-1">
+                               <span className="flex items-center gap-1.5 text-[10px] font-bold text-dark-100 uppercase tracking-widest"><Clock className="h-3.5 w-3.5" /> {session.time}</span>
+                               <span className="flex items-center gap-1.5 text-[10px] font-bold text-dark-100 uppercase tracking-widest"><UserIcon className="h-3.5 w-3.5" /> {session.coachName}</span>
+                            </div>
                           </div>
                         </div>
                         <button 
                           onClick={() => handleCancelSession(session.id)}
-                          className="p-2 rounded-lg bg-white/5 text-gray-500 hover:bg-red-500/10 hover:text-red-400 transition-all"
-                          title="Annuler la réservation"
+                          className="p-3 rounded-xl bg-dark-600 text-dark-100 hover:bg-red-500 hover:text-white transition-all"
                         >
                           <X className="h-5 w-5" />
                         </button>
@@ -302,11 +258,11 @@ const Profile = () => {
                   </AnimatePresence>
                 </div>
               ) : (
-                <div className="text-center py-10 border-2 border-dashed border-white/5 rounded-2xl">
-                  <AlertCircle className="h-10 w-10 text-gray-600 mx-auto mb-4" />
-                  <p className="text-gray-400 text-sm">Aucune séance réservée pour le moment.</p>
-                  <Link to="/schedule" className="mt-4 inline-block text-brand-400 font-bold hover:underline">
-                    Réserver un cours maintenant
+                <div className="text-center py-16 border-2 border-dashed border-dark-400 rounded-[2rem]">
+                  <AlertCircle className="h-12 w-12 text-dark-300 mx-auto mb-4" />
+                  <p className="text-dark-100 font-bold uppercase tracking-widest text-xs mb-6">Aucune séance réservée</p>
+                  <Link to="/schedule" className="btn-primary px-8 py-3 text-xs uppercase tracking-widest">
+                    Réserver maintenant
                   </Link>
                 </div>
               )}
@@ -324,99 +280,40 @@ const Profile = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsEditing(false)}
-              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+              className="absolute inset-0 bg-dark-900/95 backdrop-blur-md"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-lg dark-card rounded-[2.5rem] p-8 md:p-10 shadow-2xl border-white/10"
+              className="relative w-full max-w-lg bg-dark-800 border border-dark-300 rounded-[2.5rem] p-8 md:p-10 shadow-2xl"
             >
               <button 
                 onClick={() => setIsEditing(false)}
-                className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors"
+                className="absolute top-6 right-6 text-dark-100 hover:text-white transition-colors"
               >
                 <X className="h-6 w-6" />
               </button>
 
-              <h2 className="text-2xl font-black text-white mb-8 flex items-center gap-3">
-                <Settings className="h-6 w-6 text-brand-500" />
-                Modifier mon profil
-              </h2>
+              <h2 className="text-3xl font-black text-white mb-10 uppercase tracking-tighter">Modifier Profil</h2>
 
               <form onSubmit={handleSubmit(onUpdateProfile)} className="space-y-6">
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">
-                    Nom Complet
-                  </label>
-                  <div className="relative">
-                    <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                    <input
-                      type="text"
-                      {...register('fullName', { required: 'Le nom est requis' })}
-                      className={`${inputClass(!!errors.fullName)} pl-11`}
-                      placeholder="Alexandre Martin"
-                    />
-                  </div>
-                  {errors.fullName && <p className="text-xs text-red-400 mt-1">{errors.fullName.message}</p>}
+                  <label className="text-xs font-black text-dark-100 uppercase tracking-widest ml-1">Nom Complet</label>
+                  <input type="text" {...register('fullName', { required: true })} className={inputClass(!!errors.fullName)} />
                 </div>
-
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">
-                    Email
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                    <input
-                      type="email"
-                      {...register('email', { 
-                        required: 'L\'email est requis',
-                        pattern: { value: /^\S+@\S+$/i, message: 'Email invalide' }
-                      })}
-                      className={`${inputClass(!!errors.email)} pl-11`}
-                      placeholder="alex@example.com"
-                    />
-                  </div>
-                  {errors.email && <p className="text-xs text-red-400 mt-1">{errors.email.message}</p>}
+                  <label className="text-xs font-black text-dark-100 uppercase tracking-widest ml-1">Email</label>
+                  <input type="email" {...register('email', { required: true })} className={inputClass(!!errors.email)} />
                 </div>
-
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">
-                    Téléphone
-                  </label>
-                  <div className="relative">
-                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                    <input
-                      type="tel"
-                      {...register('phone')}
-                      className={`${inputClass(false)} pl-11`}
-                      placeholder="06 12 34 56 78"
-                    />
-                  </div>
+                  <label className="text-xs font-black text-dark-100 uppercase tracking-widest ml-1">Téléphone</label>
+                  <input type="tel" {...register('phone')} className={inputClass(false)} />
                 </div>
 
-                <div className="pt-4 flex gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setIsEditing(false)}
-                    className="flex-1 px-6 py-4 rounded-xl border border-white/10 text-white font-bold hover:bg-white/5 transition-all"
-                  >
-                    Annuler
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="flex-1 btn-primary py-4 flex items-center justify-center gap-2 disabled:opacity-50"
-                  >
-                    {isSubmitting ? (
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    ) : (
-                      <>
-                        <Save className="h-5 w-5" />
-                        Enregistrer
-                      </>
-                    )}
-                  </button>
+                <div className="pt-6 flex gap-4">
+                  <button type="button" onClick={() => setIsEditing(false)} className="flex-1 px-6 py-4 rounded-xl border border-dark-400 text-white font-black text-xs uppercase tracking-widest hover:bg-dark-700">Annuler</button>
+                  <button type="submit" disabled={isSubmitting} className="flex-1 bg-brand-500 text-white font-black text-xs uppercase tracking-widest py-4 rounded-xl hover:bg-brand-600 transition-all">Enregistrer</button>
                 </div>
               </form>
             </motion.div>

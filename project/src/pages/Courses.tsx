@@ -17,12 +17,10 @@ const Courses = () => {
       return;
     }
 
-    // Default to tomorrow for simplicity in this view
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const dateStr = tomorrow.toISOString().split('T')[0];
     
-    // Check if already reserved
     const isAlreadyReserved = user?.reservedSessions.some(
       s => s.courseName === course.name && s.date === dateStr
     );
@@ -50,8 +48,8 @@ const Courses = () => {
       price: '25€',
       defaultCoach: 'Marc Durand',
       image: 'https://images.pexels.com/photos/1552106/pexels-photo-1552106.jpeg',
-      description: 'Brûlez un maximum de calories avec ce cours cardio haute intensité.',
-      color: 'from-orange-500 to-red-500',
+      description: 'Le cours idéal pour bouger, transpirer et se sentir vivant. Cardio haute intensité garanti',
+      color: 'from-brand-500 to-orange-600',
     },
     {
       id: 2,
@@ -64,8 +62,8 @@ const Courses = () => {
       price: '20€',
       defaultCoach: 'Sarah Lopez',
       image: 'https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg',
-      description: 'Détendez-vous et renforcez votre flexibilité avec ce yoga dynamique.',
-      color: 'from-purple-500 to-indigo-500',
+      description: 'Un moment pour vous recentrer, respirer et travailler votre souplesse en douceur.',
+      color: 'from-dark-300 to-dark-400',
     },
     {
       id: 3,
@@ -78,8 +76,8 @@ const Courses = () => {
       price: '30€',
       defaultCoach: 'Marc Durand',
       image: 'https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg',
-      description: 'Entraînement fonctionnel intensif pour développer force et endurance.',
-      color: 'from-red-500 to-pink-500',
+      description: 'Travaillez votre force et votre endurance avec des exercices concrets qui transforment vraiment le corps.',
+      color: 'from-brand-500 to-orange-600',
     },
     {
       id: 4,
@@ -92,8 +90,8 @@ const Courses = () => {
       price: '22€',
       defaultCoach: 'Sarah Lopez',
       image: 'https://images.pexels.com/photos/3823039/pexels-photo-3823039.jpeg',
-      description: 'Renforcez votre centre et améliorez votre posture avec le Pilates.',
-      color: 'from-teal-500 to-cyan-500',
+      description: 'Renforcez votre corps en douceur et tenez-vous mieux dans votre quotidien grâce au Pilates.',
+      color: 'from-dark-300 to-dark-400',
     },
     {
       id: 5,
@@ -106,8 +104,8 @@ const Courses = () => {
       price: '28€',
       defaultCoach: 'Jean Rémy',
       image: 'https://images.pexels.com/photos/1552103/pexels-photo-1552103.jpeg',
-      description: "Entraînement par intervalles pour un maximum d'efficacité.",
-      color: 'from-yellow-500 to-orange-500',
+      description: "Des intervalles pensés pour vous faire progresser à chaque séance, sans vous épuiser.",
+      color: 'from-brand-500 to-orange-600',
     },
     {
       id: 6,
@@ -120,8 +118,8 @@ const Courses = () => {
       price: '25€',
       defaultCoach: 'Jean Rémy',
       image: 'https://images.pexels.com/photos/1552252/pexels-photo-1552252.jpeg',
-      description: 'Initiation à la musculation avec techniques et sécurité.',
-      color: 'from-emerald-500 to-green-500',
+      description: 'On vous accompagne pas à pas pour débuter la musculation en toute confiance et en toute sécurité.',
+      color: 'from-dark-300 to-dark-400',
     },
   ];
 
@@ -132,9 +130,9 @@ const Courses = () => {
   });
 
   const levelConfig = {
-    beginner: { label: 'Débutant', color: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20' },
-    intermediate: { label: 'Intermédiaire', color: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/20' },
-    advanced: { label: 'Avancé', color: 'bg-red-500/15 text-red-400 border-red-500/20' },
+    beginner: { label: 'Débutant', color: 'bg-dark-700 text-white border-dark-400' },
+    intermediate: { label: 'Intermédiaire', color: 'bg-brand-500/20 text-brand-500 border-brand-500/30' },
+    advanced: { label: 'Avancé', color: 'bg-brand-500 text-white border-brand-500' },
   };
 
   const levelFilters = [
@@ -153,50 +151,67 @@ const Courses = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-dark-900 pt-8 pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-dark-900 pb-20">
+      {/* Hero Header */}
+      <div className="relative h-[45vh] min-h-[350px] flex items-center justify-center overflow-hidden mb-12">
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://images.pexels.com/photos/1552252/pexels-photo-1552252.jpeg" 
+            alt="FitZone Courses Hero" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-dark-900/80 via-dark-900/90 to-dark-900" />
+        </div>
+
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="relative z-10 text-center px-4"
         >
-          <h1 className="section-title text-white mb-4">
-            Nos <span className="text-gradient">Cours</span>
+          <h1 className="section-title text-white mb-4 uppercase tracking-tighter text-5xl md:text-7xl">
+            Nos <span className="text-brand-500">Cours</span>
           </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Découvrez notre large gamme de cours adaptés à tous les niveaux et objectifs.
+          <p className="text-xl text-[#BBBBBB] max-w-2xl mx-auto leading-relaxed font-black uppercase tracking-[0.2em] text-[10px]">
+            Chaque séance vous rapproche un peu plus de la meilleure version de vous-même.
           </p>
-          {!isAuthenticated && (
-            <div className="mt-6 inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-2 text-amber-400 text-sm">
-              <AlertCircle className="h-4 w-4" />
-              Connectez-vous pour pouvoir réserver vos séances.
-            </div>
-          )}
         </motion.div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {!isAuthenticated && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-10 flex items-center gap-4 bg-brand-500/10 border border-brand-500/20 rounded-2xl px-6 py-4 text-brand-500 font-bold text-xs uppercase tracking-widest"
+          >
+            <AlertCircle className="h-5 w-5" />
+            Connectez-vous, choisissez votre séance et on s'occupe du reste.
+          </motion.div>
+        )}
 
         {/* Filters */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="dark-card rounded-3xl p-6 mb-10"
+          className="bg-[#1E1E1E] border border-[#3A3A3A] rounded-[2rem] p-8 mb-12"
         >
-          <div className="flex flex-col gap-5">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <div className="flex items-center gap-2 text-gray-400 min-w-[80px]">
-                <Filter className="h-4 w-4" />
-                <span className="text-sm font-medium">Niveau</span>
+          <div className="flex flex-col gap-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+              <div className="flex items-center gap-3 text-white min-w-[120px]">
+                <Filter className="h-4 w-4 text-brand-500" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Niveau</span>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-3">
                 {levelFilters.map((f) => (
                   <button
                     key={f.value}
                     onClick={() => setSelectedLevel(f.value)}
-                    className={`px-4 py-2 rounded-xl text-sm font-semibold border transition-all duration-200 ${
+                    className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all duration-300 ${
                       selectedLevel === f.value
-                        ? 'bg-brand-500 border-brand-500 text-white shadow-glow-sm'
-                        : 'border-white/10 text-gray-400 hover:border-white/20 hover:text-white'
+                        ? 'bg-brand-500 border-brand-500 text-white shadow-lg shadow-brand-500/20'
+                        : 'border-dark-300 text-dark-100 hover:border-brand-500 hover:text-white'
                     }`}
                   >
                     {f.label}
@@ -204,19 +219,20 @@ const Courses = () => {
                 ))}
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <div className="flex items-center gap-2 text-gray-400 min-w-[80px]">
-                <span className="text-sm font-medium">Type</span>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+              <div className="flex items-center gap-3 text-white min-w-[120px]">
+                <div className="w-4 h-4" /> {/* Spacer */}
+                <span className="text-[10px] font-black uppercase tracking-widest">Discipline</span>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-3">
                 {typeFilters.map((f) => (
                   <button
                     key={f.value}
                     onClick={() => setSelectedType(f.value)}
-                    className={`px-4 py-2 rounded-xl text-sm font-semibold border transition-all duration-200 ${
+                    className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all duration-300 ${
                       selectedType === f.value
-                        ? 'bg-brand-500 border-brand-500 text-white shadow-glow-sm'
-                        : 'border-white/10 text-gray-400 hover:border-white/20 hover:text-white'
+                        ? 'bg-brand-500 border-brand-500 text-white shadow-lg shadow-brand-500/20'
+                        : 'border-dark-300 text-dark-100 hover:border-brand-500 hover:text-white'
                     }`}
                   >
                     {f.label}
@@ -229,7 +245,7 @@ const Courses = () => {
 
         {/* Course Grid */}
         <AnimatePresence mode="popLayout">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredCourses.map((course, index) => {
               const tomorrow = new Date();
               tomorrow.setDate(tomorrow.getDate() + 1);
@@ -248,72 +264,64 @@ const Courses = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.5, delay: index * 0.08 }}
-                  whileHover={{ y: -8 }}
-                  className="group dark-card rounded-3xl overflow-hidden hover:border-white/15 transition-all duration-300"
+                  className="group bg-[#1E1E1E] border border-[#3A3A3A] rounded-[2.5rem] overflow-hidden hover:border-brand-500 transition-all duration-500 shadow-xl"
                 >
                   {/* Image */}
-                  <div className="relative h-52 overflow-hidden">
+                  <div className="relative h-60 overflow-hidden">
                     <img
                       src={course.image}
                       alt={course.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0"
                     />
-                    {/* Gradient overlay */}
-                    <div className={`absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/20 to-transparent`} />
-                    {/* Top accent line */}
-                    <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${course.color}`} />
-                    {/* Level badge */}
-                    <div className="absolute top-4 right-4">
-                      <span className={`pill border ${lvl.color}`}>
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1E1E1E] via-[#1E1E1E]/20 to-transparent" />
+                    <div className="absolute top-6 right-6">
+                      <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${lvl.color}`}>
                         {lvl.label}
                       </span>
-                    </div>
-                    {/* Price badge */}
-                    <div className="absolute bottom-4 left-4">
-                      <span className={`font-display font-black text-3xl text-white text-shadow`}>
-                        {course.price}
-                      </span>
-                      <span className="text-gray-400 text-sm ml-1">/séance</span>
                     </div>
                   </div>
 
                   {/* Content */}
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-white mb-2">{course.name}</h3>
-                    <p className="text-gray-400 text-sm mb-5 leading-relaxed">{course.description}</p>
+                  <div className="p-8">
+                    <div className="flex justify-between items-start mb-4">
+                        <h3 className="text-2xl font-black text-white uppercase tracking-tight">{course.name}</h3>
+                        <div className="text-brand-500 font-black text-2xl">{course.price}</div>
+                    </div>
+                    <p className="text-[#BBBBBB] text-sm font-medium mb-8 leading-relaxed h-10 overflow-hidden line-clamp-2">
+                        {course.description}
+                    </p>
 
-                    {/* Meta */}
-                    <div className="flex items-center gap-4 text-xs text-gray-400 mb-6">
-                      <div className="flex items-center gap-1.5">
-                        <Clock className="h-3.5 w-3.5" />
-                        {course.duration}
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <Users className="h-3.5 w-3.5" />
-                        Max {course.capacity}
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <Star className="h-3.5 w-3.5 text-yellow-400" />
-                        <span className="text-yellow-400 font-medium">{course.rating}</span>
-                      </div>
+                    <div className="grid grid-cols-3 gap-4 mb-8">
+                        <div className="bg-dark-700 rounded-2xl p-3 text-center border border-dark-400">
+                           <Clock className="h-4 w-4 text-brand-500 mx-auto mb-2" />
+                           <span className="text-[10px] font-black text-white uppercase">{course.duration}</span>
+                        </div>
+                        <div className="bg-dark-700 rounded-2xl p-3 text-center border border-dark-400">
+                           <Users className="h-4 w-4 text-brand-500 mx-auto mb-2" />
+                           <span className="text-[10px] font-black text-white uppercase">{course.capacity} max</span>
+                        </div>
+                        <div className="bg-dark-700 rounded-2xl p-3 text-center border border-dark-400">
+                           <Star className="h-4 w-4 text-brand-500 mx-auto mb-2" />
+                           <span className="text-[10px] font-black text-white uppercase">{course.rating}</span>
+                        </div>
                     </div>
 
                     <button
                       onClick={() => handleReservation(course)}
                       disabled={isReserved}
-                      className={`w-full py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 ${
+                      className={`w-full py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-2 ${
                         isReserved
-                          ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 cursor-default'
-                          : `bg-gradient-to-r ${course.color} text-white hover:shadow-glow-orange hover:scale-[1.02]`
+                          ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 cursor-default'
+                          : `bg-brand-500 text-white hover:bg-brand-600 shadow-xl shadow-brand-500/20`
                       }`}
                     >
                       {isReserved ? (
                         <>
                           <CheckCircle className="h-4 w-4" />
-                          Réservé pour demain
+                          RÉSERVÉ
                         </>
                       ) : (
-                        'Réserver maintenant'
+                        "C'est parti !"
                       )}
                     </button>
                   </div>
@@ -322,23 +330,6 @@ const Courses = () => {
             })}
           </div>
         </AnimatePresence>
-
-        {filteredCourses.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-20"
-          >
-            <div className="text-6xl mb-4">🔍</div>
-            <p className="text-gray-400 text-lg">Aucun cours ne correspond à vos critères.</p>
-            <button
-              onClick={() => { setSelectedLevel('all'); setSelectedType('all'); }}
-              className="mt-4 text-brand-400 hover:text-brand-300 font-medium underline underline-offset-4"
-            >
-              Réinitialiser les filtres
-            </button>
-          </motion.div>
-        )}
       </div>
     </div>
   );

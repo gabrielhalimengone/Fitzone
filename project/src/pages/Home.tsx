@@ -9,98 +9,83 @@ const features = [
     icon: Target,
     title: 'Programmes Personnalisés',
     description: 'Des entraînements sur-mesure adaptés à vos objectifs et votre niveau actuel.',
-    color: 'from-orange-500 to-red-500',
-    glow: 'rgba(249,115,22,0.3)',
+    color: 'from-orange-500 to-brand-500',
+    glow: 'rgba(255,69,0,0.2)',
   },
   {
     icon: Users,
     title: 'Coachs Certifiés',
     description: "Une équipe d'experts passionnés pour vous accompagner dans votre progression.",
-    color: 'from-purple-500 to-indigo-500',
-    glow: 'rgba(168,85,247,0.3)',
+    color: 'from-dark-300 to-dark-400',
+    glow: 'rgba(255,255,255,0.05)',
   },
   {
     icon: Clock,
     title: 'Horaires Flexibles',
-    description: "Cours disponibles 7j/7 de 6h à 22h pour s'adapter à votre emploi du temps.",
-    color: 'from-cyan-500 to-blue-500',
-    glow: 'rgba(6,182,212,0.3)',
+    description: 'Ouvert 7j/7 avec des créneaux larges pour s\'adapter à votre emploi du temps.',
+    color: 'from-orange-500 to-brand-500',
+    glow: 'rgba(255,69,0,0.2)',
   },
   {
     icon: Trophy,
     title: 'Résultats Garantis',
-    description: 'Méthodes éprouvées et scientifiques pour atteindre vos objectifs rapidement.',
-    color: 'from-emerald-500 to-teal-500',
-    glow: 'rgba(16,185,129,0.3)',
+    description: 'Un suivi rigoureux et des conseils nutritionnels pour atteindre vos sommets.',
+    color: 'from-dark-300 to-dark-400',
+    glow: 'rgba(255,255,255,0.05)',
   },
 ];
 
 const Home = () => {
-  const [isBookingOpen, setIsBookingOpen] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [activeCourse, setActiveCourse] = useState<string | null>(null);
+  const [isBooked, setIsBooked] = useState(false);
 
-  const handleBookingSubmit = (e: React.FormEvent) => {
+  const handleBooking = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitted(true);
+    setIsBooked(true);
     setTimeout(() => {
-      setIsSubmitted(false);
-      setIsBookingOpen(false);
+      setIsBooked(false);
+      setActiveCourse(null);
     }, 3000);
   };
 
   return (
-    <div>
+    <div className="bg-dark-900 min-h-screen">
       <Hero />
 
       {/* Features Section */}
-      <section className="pt-16 pb-28 bg-dark-800 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.03]"
-          style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)', backgroundSize: '32px 32px' }}
-        />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-20"
-          >
-            <div className="inline-flex items-center gap-2 bg-brand-500/10 border border-brand-500/20 rounded-full px-4 py-2 mb-6">
-              <Zap className="h-4 w-4 text-brand-400" />
-              <span className="text-brand-300 text-sm font-semibold">Pourquoi nous choisir</span>
-            </div>
-            <h2 className="section-title text-white mb-5">
-              Pourquoi Choisir{' '}
-              <span className="text-gradient">FitZone</span> ?
-            </h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
-              Nous offrons bien plus qu'une simple salle de sport. Découvrez notre approche unique du fitness.
+      <section className="py-24 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-16">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="section-title uppercase tracking-tighter mb-4"
+            >
+              Pourquoi Choisir <span className="text-brand-500">FitZone ?</span>
+            </motion.h2>
+            <p className="text-dark-100 max-w-2xl mx-auto font-medium">
+              Nous combinons expertise, technologie et motivation pour vous offrir la meilleure expérience fitness.
             </p>
-          </motion.div>
+          </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
               <motion.div
                 key={feature.title}
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                whileHover={{ y: -8 }}
-                className="relative group"
+                transition={{ delay: index * 0.1 }}
+                className="group relative p-8 bg-dark-800 border border-dark-300 rounded-[2rem] hover:border-brand-500/50 transition-all duration-500"
               >
-                <div
-                  className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"
-                  style={{ background: feature.glow }}
-                />
-                <div className="relative dark-card rounded-3xl p-8 h-full transition-all duration-300 group-hover:border-white/15">
-                  <div className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} mb-6 shadow-lg`}>
-                    <feature.icon className="h-7 w-7 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
-                  <p className="text-gray-400 leading-relaxed text-sm">{feature.description}</p>
+                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} p-3.5 mb-6 shadow-xl relative z-10`}>
+                  <feature.icon className="w-full h-full text-white" />
                 </div>
+                <h3 className="text-xl font-black text-white mb-3 uppercase tracking-tight">{feature.title}</h3>
+                <p className="text-dark-100 text-sm leading-relaxed font-medium">
+                  {feature.description}
+                </p>
               </motion.div>
             ))}
           </div>
@@ -108,115 +93,83 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="pt-16 pb-28 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-700 via-brand-600 to-red-700" />
-        <div className="absolute inset-0 bg-noise opacity-30" />
-        <div className="absolute top-0 left-0 w-96 h-96 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-black/20 rounded-full translate-x-1/2 translate-y-1/2 blur-3xl" />
-
-        <div className="relative max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <h2 className="font-display text-4xl md:text-6xl font-black text-white mb-6 text-shadow leading-tight">
-              Prêt à Commencer
-              <br />Votre Transformation ?
-            </h2>
-            <p className="text-xl text-white/80 mb-10 max-w-xl mx-auto leading-relaxed">
-              Rejoignez des centaines de membres qui ont déjà transformé leur vie avec nos programmes d'élite.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <section className="py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="relative rounded-[3rem] overflow-hidden bg-dark-800 border border-dark-300 p-12 md:p-20 text-center">
+            <div className="absolute inset-0 bg-hero-pattern opacity-30" />
+            <div className="relative z-10">
+              <h2 className="text-4xl md:text-6xl font-black text-white mb-6 uppercase tracking-tighter leading-none">
+                Prêt à <span className="text-brand-500">faire le</span> premier pas ?
+              </h2>
+              <p className="text-xl text-dark-100 mb-10 max-w-2xl mx-auto font-medium">
+                Ils ont osé se lancer, et ils ne le regrettent pas. 
+                <br />Votre première séance est offerte pour que vous puissiez en faire autant.
+              </p>
               <Link
-                to="/subscriptions"
-                className="inline-flex items-center gap-3 bg-white text-brand-700 px-10 py-5 rounded-2xl font-bold text-lg hover:bg-gray-100 transition-all duration-300 hover:scale-105 shadow-xl w-full sm:w-auto justify-center"
+                to="/signup"
+                className="btn-primary inline-flex items-center gap-3 text-lg px-10 py-5 uppercase tracking-widest font-black"
               >
-                Démarrer mon parcours
-                <ArrowRight className="h-5 w-5" />
+                Je rejoins la communauté
+                <ArrowRight className="h-6 w-6" />
               </Link>
-              <button
-                onClick={() => setIsBookingOpen(true)}
-                className="inline-flex items-center gap-3 bg-dark-900/40 backdrop-blur-md border border-white/20 text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-dark-900/60 transition-all duration-300 hover:scale-105 shadow-xl w-full sm:w-auto justify-center"
-              >
-                Réserver une séance
-                <Clock className="h-5 w-5" />
-              </button>
             </div>
-            <p className="text-white/50 text-sm mt-5">Aucune carte de crédit requise · Annulation à tout moment</p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Booking Modal */}
+      {/* Booking Modal (Placeholder for actual courses) */}
       <AnimatePresence>
-        {isBookingOpen && (
+        {activeCourse && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-dark-900/90 backdrop-blur-sm p-4"
           >
-            <div className="absolute inset-0" onClick={() => setIsBookingOpen(false)} />
+            <div className="absolute inset-0" onClick={() => setActiveCourse(null)} />
             <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="relative w-full max-w-lg dark-card rounded-[2.5rem] p-8 md:p-10 shadow-2xl border-white/10"
+              className="relative w-full max-w-lg bg-dark-700 border border-dark-300 rounded-[2.5rem] p-8 md:p-10 shadow-2xl"
             >
               <button
-                onClick={() => setIsBookingOpen(false)}
-                className="absolute top-6 right-6 p-2 text-gray-500 hover:text-white transition-colors"
+                onClick={() => setActiveCourse(null)}
+                className="absolute top-6 right-6 p-2 text-dark-100 hover:text-white transition-colors"
               >
                 <X className="h-6 w-6" />
               </button>
 
-              {isSubmitted ? (
+              {isBooked ? (
                 <div className="text-center py-10">
                   <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
                     <CheckCircle2 className="h-10 w-10 text-emerald-500" />
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-4">Réservation Reçue !</h3>
-                  <p className="text-gray-400">
-                    Nous avons bien reçu votre demande de réservation. Un coach vous contactera d'ici 24h pour confirmer le créneau.
-                  </p>
+                  <h3 className="text-2xl font-bold text-white mb-4">Séance Réservée !</h3>
+                  <p className="text-dark-100">Vous recevrez un email de confirmation.</p>
                 </div>
               ) : (
                 <>
-                  <h2 className="text-3xl font-black text-white mb-2">Réserver une séance</h2>
-                  <p className="text-gray-400 mb-8">Choisissez votre type de séance et nous vous rappellerons.</p>
+                  <h2 className="text-3xl font-black text-white mb-2 uppercase tracking-tight">Réserver une séance</h2>
+                  <p className="text-dark-100 mb-8 font-medium">Réservez votre place pour une session de coaching ou un cours collectif.</p>
 
-                  <form onSubmit={handleBookingSubmit} className="space-y-4">
+                  <form onSubmit={handleBooking} className="space-y-5">
                     <div className="space-y-2">
-                      <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Nom Complet</label>
-                      <input required type="text" placeholder="Jean Dupont" className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:ring-2 focus:ring-brand-500 transition-all" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Téléphone</label>
-                        <input required type="tel" placeholder="06..." className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:ring-2 focus:ring-brand-500 transition-all" />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Type de séance</label>
-                        <select className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:ring-2 focus:ring-brand-500 transition-all appearance-none">
-                          <option className="bg-dark-800">Cardio</option>
-                          <option className="bg-dark-800">Musculation</option>
-                          <option className="bg-dark-800">Yoga</option>
-                          <option className="bg-dark-800">CrossFit</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Coach préféré (Optionnel)</label>
-                      <select className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:ring-2 focus:ring-brand-500 transition-all appearance-none">
-                        <option className="bg-dark-800">Aucune préférence</option>
-                        <option className="bg-dark-800">Marc Durand</option>
-                        <option className="bg-dark-800">Sarah Lopez</option>
-                        <option className="bg-dark-800">Jean Rémy</option>
+                      <label className="text-xs font-black text-dark-100 uppercase tracking-widest ml-1">Séance / Coach</label>
+                      <select required className="w-full px-5 py-4 bg-dark-500 border border-dark-200 rounded-2xl text-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all appearance-none">
+                        <option value="">Choisir une séance</option>
+                        <option value="crossfit">CrossFit Power - Marc Durand</option>
+                        <option value="yoga">Yoga Vinyasa - Sarah Martin</option>
+                        <option value="boxing">Boxe Anglaise - Thomas Petit</option>
                       </select>
                     </div>
-                    <button type="submit" className="w-full btn-primary py-4 text-lg font-bold mt-4">Confirmer la réservation</button>
+                    <div className="space-y-2">
+                      <label className="text-xs font-black text-dark-100 uppercase tracking-widest ml-1">Date & Heure</label>
+                      <input required type="datetime-local" className="w-full px-5 py-4 bg-dark-500 border border-dark-200 rounded-2xl text-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all" />
+                    </div>
+                    <button type="submit" className="w-full bg-brand-500 hover:bg-brand-600 text-white py-4 text-lg font-black uppercase tracking-widest mt-4 rounded-2xl transition-all duration-300 shadow-xl shadow-brand-500/20">
+                      Réserver ma place
+                    </button>
                   </form>
                 </>
               )}

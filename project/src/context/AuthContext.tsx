@@ -63,7 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signup = async (data: any) => {
     await new Promise(resolve => setTimeout(resolve, 1500));
-    api.signup(data);
+    await api.signup(data);
     setUser(api.getCurrentUser());
   };
 

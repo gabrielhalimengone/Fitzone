@@ -36,7 +36,7 @@ const Navbar = () => {
     <nav
       className={`sticky top-0 z-50 transition-all duration-500 ${
         scrolled
-          ? 'bg-dark-900/90 backdrop-blur-xl border-b border-white/5 shadow-dark-card'
+          ? 'bg-dark-900 border-b border-dark-400 shadow-xl'
           : 'bg-transparent'
       }`}
     >

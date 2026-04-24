@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { Mail, Lock, User, Phone, ArrowRight, Eye, EyeOff, Loader2, LogIn, UserPlus, AlertCircle, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Mail, Lock, User, Phone, ArrowRight, Eye, EyeOff, Loader2, LogIn, UserPlus, AlertCircle, ArrowLeft, CheckCircle2, Zap, Crown, Star } from 'lucide-react';
 
 interface AuthProps {
   mode?: 'login' | 'signup' | 'forgot';
@@ -18,6 +18,8 @@ const Auth: React.FC<AuthProps> = ({ mode: initialMode }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as any)?.from?.pathname || '/profile';
+  const initialPlan = (location.state as any)?.selectedPlan || 'starter';
+  const [selectedPlan, setSelectedPlan] = useState<'starter' | 'pro' | 'elite'>(initialPlan);
 
   // Sync state with prop if it changes
   useEffect(() => {
@@ -45,6 +47,7 @@ const Auth: React.FC<AuthProps> = ({ mode: initialMode }) => {
       } else if (mode === 'signup') {
         const signupData = {
           ...data,
+          plan: selectedPlan,
           fullName: `${data.firstName} ${data.lastName}`
         };
         await signup(signupData);
@@ -157,6 +160,32 @@ const Auth: React.FC<AuthProps> = ({ mode: initialMode }) => {
                       {...register('phone', { required: mode === 'signup' })}
                       className={inputClass(!!errors.phone)}
                     />
+                  </div>
+
+                  {/* Choix du Forfait */}
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Choix du Forfait</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        { id: 'starter', label: 'Starter', icon: Star },
+                        { id: 'pro', label: 'Pro', icon: Zap },
+                        { id: 'elite', label: 'Elite', icon: Crown }
+                      ].map((p) => (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => setSelectedPlan(p.id as any)}
+                          className={`flex flex-col items-center gap-2 py-3 rounded-xl border transition-all ${
+                            selectedPlan === p.id 
+                              ? 'bg-brand-500/10 border-brand-500 text-white shadow-lg shadow-brand-500/10' 
+                              : 'bg-white/5 border-white/5 text-gray-400 hover:border-white/20'
+                          }`}
+                        >
+                          <p.icon className={`h-4 w-4 ${selectedPlan === p.id ? 'text-brand-500' : 'text-gray-500'}`} />
+                          <span className="text-[9px] font-black uppercase tracking-widest">{p.label}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </motion.div>
               )}

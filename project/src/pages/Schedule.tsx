@@ -5,12 +5,12 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const courseColors: Record<string, string> = {
-  'Cardio Intensif':    'from-orange-500 to-red-500',
-  'Yoga Flow':          'from-purple-500 to-indigo-500',
-  'HIIT Bootcamp':      'from-yellow-500 to-orange-500',
-  'CrossFit Power':     'from-red-500 to-pink-500',
-  'Pilates Core':       'from-teal-500 to-cyan-500',
-  'Musculation Débutant': 'from-emerald-500 to-green-500',
+  'Cardio Intensif':    'from-brand-500 to-orange-600',
+  'Yoga Flow':          'from-dark-300 to-dark-400',
+  'HIIT Bootcamp':      'from-brand-500 to-orange-600',
+  'CrossFit Power':     'from-brand-500 to-orange-600',
+  'Pilates Core':       'from-dark-300 to-dark-400',
+  'Musculation Débutant': 'from-dark-300 to-dark-400',
 };
 
 const Schedule = () => {
@@ -92,8 +92,6 @@ const Schedule = () => {
     }
 
     const date = weekDates[dayIndex].toISOString().split('T')[0];
-    
-    // Check if already reserved
     const isAlreadyReserved = user?.reservedSessions.some(
       s => s.date === date && s.time === time && s.courseName === session.course
     );
@@ -117,57 +115,71 @@ const Schedule = () => {
   );
 
   return (
-    <div className="min-h-screen bg-dark-900 pt-8 pb-20">
-      <div className="max-w-full px-4 sm:px-6 lg:px-8 xl:max-w-[1400px] xl:mx-auto">
+    <div className="min-h-screen bg-dark-900 pb-20">
+      {/* Hero Header */}
+      <div className="relative h-[40vh] min-h-[300px] flex items-center justify-center overflow-hidden mb-12">
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg" 
+            alt="FitZone Schedule Hero" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-dark-900/80 via-dark-900/90 to-dark-900" />
+        </div>
+
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-12"
+          className="relative z-10 text-center px-4"
         >
-          <h1 className="section-title text-white mb-4">
-            Planning des <span className="text-gradient">Cours</span>
+          <h1 className="section-title text-white mb-4 uppercase tracking-tighter text-5xl md:text-7xl">
+            Planning des <span className="text-brand-500">Cours</span>
           </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Consultez nos horaires et réservez vos cours préférés en un clic.
+          <p className="text-xl text-[#BBBBBB] max-w-2xl mx-auto leading-relaxed font-black uppercase tracking-[0.2em] text-[10px]">
+            Construisez votre semaine fitness selon vos envies et vos objectifs.
           </p>
-          {!isAuthenticated && (
-            <div className="mt-6 inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-2 text-amber-400 text-sm">
-              <AlertCircle className="h-4 w-4" />
-              Connectez-vous pour pouvoir réserver vos séances.
-            </div>
-          )}
         </motion.div>
+      </div>
+
+      <div className="max-w-full px-4 sm:px-6 lg:px-8 xl:max-w-[1500px] xl:mx-auto">
+        {!isAuthenticated && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-10 flex items-center gap-4 bg-brand-500/10 border border-brand-500/20 rounded-2xl px-6 py-4 text-brand-500 font-bold text-xs uppercase tracking-widest"
+          >
+            <AlertCircle className="h-5 w-5" />
+            Connectez-vous pour pouvoir réserver vos séances.
+          </motion.div>
+        )}
 
         {/* Week Navigation */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="dark-card rounded-2xl p-4 mb-6 flex justify-between items-center"
+          className="bg-[#1E1E1E] border border-[#3A3A3A] rounded-2xl p-4 mb-8 flex flex-col sm:flex-row justify-between items-center gap-4"
         >
           <button
             onClick={() => setCurrentWeek(currentWeek - 1)}
-            className="flex items-center gap-2 text-gray-400 hover:text-white px-4 py-2 rounded-xl hover:bg-white/5 transition-all duration-200"
+            className="flex items-center gap-2 text-dark-100 hover:text-white px-4 py-2.5 rounded-xl bg-dark-700 border border-dark-400 hover:border-brand-500 transition-all font-black text-[10px] uppercase tracking-widest"
           >
-            <ChevronLeft className="h-5 w-5" />
-            <span className="hidden sm:inline text-sm font-medium">Semaine précédente</span>
+            <ChevronLeft className="h-4 w-4" />
+            Précédent
           </button>
-          <div className="flex items-center gap-2 text-white font-semibold">
-            <CalendarDays className="h-5 w-5 text-brand-400" />
-            <span className="text-sm md:text-base">
-              Semaine du{' '}
-              {weekDates[0].toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}
-              {' '}au{' '}
-              {weekDates[6].toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
+          <div className="flex items-center gap-3 text-white font-black text-xs uppercase tracking-widest">
+            <CalendarDays className="h-5 w-5 text-brand-500" />
+            <span className="bg-dark-700 px-4 py-2 rounded-xl border border-dark-400">
+              Du {weekDates[0].toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })} au {weekDates[6].toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}
             </span>
           </div>
           <button
             onClick={() => setCurrentWeek(currentWeek + 1)}
-            className="flex items-center gap-2 text-gray-400 hover:text-white px-4 py-2 rounded-xl hover:bg-white/5 transition-all duration-200"
+            className="flex items-center gap-2 text-dark-100 hover:text-white px-4 py-2.5 rounded-xl bg-dark-700 border border-dark-400 hover:border-brand-500 transition-all font-black text-[10px] uppercase tracking-widest"
           >
-            <span className="hidden sm:inline text-sm font-medium">Semaine suivante</span>
-            <ChevronRight className="h-5 w-5" />
+            Suivant
+            <ChevronRight className="h-4 w-4" />
           </button>
         </motion.div>
 
@@ -176,31 +188,28 @@ const Schedule = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="dark-card rounded-3xl overflow-hidden"
+          className="bg-[#1E1E1E] border border-[#3A3A3A] rounded-[2.5rem] overflow-hidden shadow-2xl"
         >
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[900px]">
+            <table className="w-full min-w-[1000px] border-collapse">
               <thead>
-                <tr className="border-b border-white/5">
-                  <th className="px-5 py-5 text-left w-20">
-                    <div className="flex items-center gap-2 text-gray-400 text-xs font-semibold uppercase tracking-wider">
-                      <Clock className="h-3.5 w-3.5" />
-                      Heure
+                <tr className="border-b border-dark-400">
+                  <th className="px-6 py-8 text-left w-24 bg-dark-800">
+                    <div className="flex flex-col gap-1 text-brand-500 text-[10px] font-black uppercase tracking-widest">
+                      <Clock className="h-4 w-4 mb-1" />
+                      HEURE
                     </div>
                   </th>
                   {days.map((day, i) => {
                     const date = weekDates[i];
-                    const todayClass = isToday(date);
+                    const isTday = isToday(date);
                     return (
-                      <th key={day} className={`px-4 py-5 text-left text-xs font-semibold uppercase tracking-wider ${todayClass ? 'text-brand-400' : 'text-gray-400'}`}>
-                        <div className={`flex flex-col gap-1`}>
-                          <span>{day.substring(0, 3)}</span>
-                          <span className={`text-lg font-black ${todayClass ? 'text-brand-400' : 'text-white'}`}>
-                            {date.toLocaleDateString('fr-FR', { day: '2-digit' })}
-                          </span>
-                          {todayClass && (
-                            <span className="inline-block w-1.5 h-1.5 bg-brand-400 rounded-full mx-auto" />
-                          )}
+                      <th key={day} className={`px-4 py-8 text-left border-l border-dark-400 ${isTday ? 'bg-brand-500/5' : 'bg-dark-800'}`}>
+                        <div className="flex flex-col">
+                           <span className="text-[10px] font-black text-dark-100 uppercase tracking-widest mb-1">{day}</span>
+                           <span className={`text-2xl font-black ${isTday ? 'text-brand-500' : 'text-white'}`}>
+                             {date.toLocaleDateString('fr-FR', { day: '2-digit' })}
+                           </span>
                         </div>
                       </th>
                     );
@@ -209,8 +218,8 @@ const Schedule = () => {
               </thead>
               <tbody>
                 {filledTimes.map((time, rowIndex) => (
-                  <tr key={time} className={`border-b border-white/[0.03] ${rowIndex % 2 === 0 ? 'bg-white/[0.01]' : ''}`}>
-                    <td className="px-5 py-3 text-sm font-mono font-semibold text-gray-400 whitespace-nowrap">
+                  <tr key={time} className="border-b border-dark-400">
+                    <td className="px-6 py-6 text-[10px] font-black text-dark-100 bg-dark-800 border-r border-dark-400">
                       {time}
                     </td>
                     {days.map((day, dayIndex) => {
@@ -222,41 +231,40 @@ const Schedule = () => {
                         s => s.date === dateStr && s.time === time && s.courseName === session?.course
                       );
                       
-                      const colorClass = session ? (courseColors[session.course] || 'from-gray-500 to-gray-600') : '';
-                      const todayDay = isToday(weekDates[dayIndex]);
+                      const colorClass = session ? (courseColors[session.course] || 'from-dark-300 to-dark-400') : '';
+                      const isTday = isToday(weekDates[dayIndex]);
 
                       return (
-                        <td key={`${day}-${time}`} className={`px-3 py-3 ${todayDay ? 'bg-brand-500/[0.03]' : ''}`}>
+                        <td key={`${day}-${time}`} className={`px-3 py-3 border-l border-dark-400 ${isTday ? 'bg-brand-500/[0.02]' : ''}`}>
                           {session ? (
-                            <div className={`rounded-xl border overflow-hidden ${
+                            <div className={`rounded-2xl border ${
                               session.available
-                                ? 'border-white/8 hover:border-white/15'
-                                : 'border-white/5 opacity-50'
-                            } transition-all duration-200`}>
-                              {/* Color bar */}
-                              <div className={`h-1 bg-gradient-to-r ${colorClass}`} />
-                              <div className="p-2.5">
-                                <div className="text-xs font-semibold text-white mb-1 leading-tight">{session.course}</div>
-                                <div className="text-[10px] text-gray-400 mb-2">{session.duration} min — {session.coach}</div>
-                                {session.available ? (
-                                  <button
-                                    onClick={() => handleBooking(dayIndex, time, session)}
-                                    disabled={isReserved}
-                                    className={`text-[10px] px-2.5 py-1 rounded-lg font-semibold transition-all duration-200 w-full ${
-                                      isReserved
-                                        ? 'bg-emerald-500/20 text-emerald-400 cursor-default'
-                                        : `bg-gradient-to-r ${colorClass} text-white hover:opacity-90`
-                                    }`}
-                                  >
-                                    {isReserved ? '✓ Réservé' : 'Réserver'}
-                                  </button>
-                                ) : (
-                                  <span className="text-[10px] text-red-400 font-semibold">Complet</span>
-                                )}
-                              </div>
+                                ? 'bg-dark-700 border-dark-400 hover:border-brand-500'
+                                : 'bg-dark-800 border-dark-400 opacity-40'
+                            } transition-all duration-300 p-4 group`}>
+                              <div className="text-[10px] font-black text-white uppercase tracking-tight mb-1 truncate leading-tight">{session.course}</div>
+                              <div className="text-[9px] text-dark-100 font-bold uppercase mb-3">{session.coach}</div>
+                              
+                              {session.available ? (
+                                <button
+                                  onClick={() => handleBooking(dayIndex, time, session)}
+                                  disabled={isReserved}
+                                  className={`w-full py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${
+                                    isReserved
+                                      ? 'bg-emerald-500/10 text-emerald-500'
+                                      : 'bg-brand-500 text-white hover:bg-brand-600'
+                                  }`}
+                                >
+                                  {isReserved ? '✓ PRÊT' : 'RÉSERVER'}
+                                </button>
+                              ) : (
+                                <div className="text-[9px] text-red-500 font-black uppercase text-center py-2">COMPLET</div>
+                              )}
                             </div>
                           ) : (
-                            <div className="text-white/10 text-center text-xs select-none">·</div>
+                            <div className="flex justify-center items-center h-full opacity-10">
+                               <div className="w-1 h-1 bg-white rounded-full" />
+                            </div>
                           )}
                         </td>
                       );
@@ -269,30 +277,20 @@ const Schedule = () => {
         </motion.div>
 
         {/* Legend */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="mt-6 dark-card rounded-2xl p-5 flex flex-wrap gap-6 items-center"
-        >
-          <span className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Légende :</span>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-1.5 rounded-full bg-gradient-to-r from-brand-500 to-brand-400" />
-            <span className="text-sm text-gray-400">Places disponibles</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-1.5 rounded-full bg-gradient-to-r from-red-500 to-pink-500 opacity-40" />
-            <span className="text-sm text-gray-400">Cours complet</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-1.5 rounded-full bg-emerald-500" />
-            <span className="text-sm text-gray-400">Réservé par vous</span>
-          </div>
-          <div className="ml-auto flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-brand-400 rounded-full" />
-            <span className="text-sm text-brand-400 font-medium">Aujourd'hui</span>
-          </div>
-        </motion.div>
+        <div className="mt-10 flex flex-wrap gap-8 items-center justify-center text-[10px] font-black uppercase tracking-[0.2em] text-dark-100">
+           <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-md bg-brand-500" />
+              <span>Disponible</span>
+           </div>
+           <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-md bg-emerald-500/20 border border-emerald-500/40" />
+              <span>Réservé</span>
+           </div>
+           <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-md bg-dark-800 opacity-40 border border-dark-400" />
+              <span>Complet</span>
+           </div>
+        </div>
       </div>
     </div>
   );
