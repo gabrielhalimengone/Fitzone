@@ -3,11 +3,87 @@ import { useForm } from 'react-hook-form';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { Mail, Lock, User, Phone, ArrowRight, Eye, EyeOff, Loader2, LogIn, UserPlus, AlertCircle, ArrowLeft, CheckCircle2, Zap, Crown, Star } from 'lucide-react';
+import { Mail, Lock, User, Phone, ArrowRight, Eye, EyeOff, Loader2, LogIn, UserPlus, AlertCircle, ArrowLeft, CheckCircle2, Zap, Crown, Star, Dumbbell } from 'lucide-react';
 
 interface AuthProps {
   mode?: 'login' | 'signup' | 'forgot';
 }
+
+const FloatingInput = ({ 
+  icon: Icon, 
+  label, 
+  type, 
+  name, 
+  register, 
+  rules, 
+  error, 
+  showPasswordToggle, 
+  showPassword, 
+  setShowPassword 
+}: any) => {
+  const [isFocused, setIsFocused] = useState(false);
+  const [hasValue, setHasValue] = useState(false);
+
+  return (
+    <div className="relative group">
+      <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-300 z-10 ${isFocused || hasValue ? 'scale-75 -translate-y-9 -translate-x-2 text-brand-500' : 'text-dark-100'}`}>
+        {Icon && <Icon className="h-5 w-5" />}
+      </div>
+      
+      <label className={`absolute left-12 top-1/2 -translate-y-1/2 pointer-events-none transition-all duration-300 font-black uppercase tracking-widest text-[10px] ${isFocused || hasValue ? 'opacity-0 scale-75 -translate-y-10' : 'text-dark-100 opacity-60'}`}>
+        {label}
+      </label>
+
+      {/* Pulsing glow when focused */}
+      <AnimatePresence>
+        {isFocused && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-brand-500/5 rounded-2xl blur-xl -z-10"
+          />
+        )}
+      </AnimatePresence>
+
+      <input
+        type={type}
+        {...register(name, { 
+          ...rules,
+          onChange: (e: any) => setHasValue(e.target.value.length > 0)
+        })}
+        onFocus={() => setIsFocused(true)}
+        onBlur={(e) => {
+          setIsFocused(false);
+          setHasValue(e.target.value.length > 0);
+        }}
+        className={`w-full pl-12 pr-12 py-5 bg-dark-800 border-2 rounded-2xl text-white text-[11px] font-black uppercase tracking-widest outline-none transition-all duration-300 ${
+          error ? 'border-red-500/50' : isFocused ? 'border-brand-500 shadow-lg shadow-brand-500/10' : 'border-dark-300 hover:border-dark-100'
+        }`}
+      />
+
+      {showPasswordToggle && (
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-dark-100 hover:text-white transition-colors"
+        >
+          {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+        </button>
+      )}
+
+      {error && (
+        <motion.p 
+          initial={{ opacity: 0, y: -5 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-[9px] font-black text-red-500 mt-2 ml-1 uppercase tracking-widest"
+        >
+          {error.message}
+        </motion.p>
+      )}
+    </div>
+  );
+};
 
 const Auth: React.FC<AuthProps> = ({ mode: initialMode }) => {
   const [mode, setMode] = useState<'login' | 'signup' | 'forgot'>(initialMode || 'login');
@@ -21,7 +97,6 @@ const Auth: React.FC<AuthProps> = ({ mode: initialMode }) => {
   const initialPlan = (location.state as any)?.selectedPlan || 'starter';
   const [selectedPlan, setSelectedPlan] = useState<'starter' | 'pro' | 'elite'>(initialPlan);
 
-  // Sync state with prop if it changes
   useEffect(() => {
     if (initialMode) {
       setMode(initialMode);
@@ -53,58 +128,51 @@ const Auth: React.FC<AuthProps> = ({ mode: initialMode }) => {
         await signup(signupData);
         navigate(from, { replace: true });
       } else if (mode === 'forgot') {
-        // Simulate forgot password
         await new Promise(resolve => setTimeout(resolve, 1500));
         setSuccess(`Un lien de réinitialisation a été envoyé à ${data.email}`);
         reset();
       }
     } catch (err: any) {
       setError(err.message || 'Une erreur est survenue');
-      console.error(err);
     }
   };
 
-  const inputClass = (hasError: boolean) =>
-    `w-full pl-11 pr-11 py-3.5 bg-white/5 border rounded-xl text-white placeholder-gray-400 text-sm outline-none transition-all duration-200 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 ${
-      hasError ? 'border-red-500/50 bg-red-500/5' : 'border-white/8 hover:border-white/15'
-    }`;
-
   return (
-    <div className="min-h-[calc(100vh-80px)] flex items-center justify-center py-20 px-4">
-      {/* Background elements */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-brand-500/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-red-600/10 rounded-full blur-3xl" />
-      </div>
+    <div className="min-h-screen flex items-center justify-center py-20 px-4 bg-dark-900 relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-500/10 rounded-full blur-[120px] -mr-64 -mt-64" />
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-dark-400/20 rounded-full blur-[120px] -ml-64 -mb-64" />
 
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative z-10 w-full max-w-md"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="relative z-10 w-full max-w-xl"
       >
-        <div className="dark-card rounded-[2.5rem] p-8 md:p-10 shadow-2xl border-white/5">
-          {/* Header */}
-          <div className="text-center mb-10">
-            <h1 className="text-3xl font-black text-white mb-3">
-              {mode === 'login' && 'Bon retour !'}
-              {mode === 'signup' && 'Rejoignez-nous'}
-              {mode === 'forgot' && 'Mot de passe oublié'}
+        <div className="bg-[#1E1E1E] border border-[#3A3A3A] rounded-[3.5rem] p-10 md:p-16 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-brand-500" />
+          
+          <div className="text-center mb-12">
+             <div className="inline-flex p-4 bg-brand-500/10 border border-brand-500/20 rounded-2xl mb-6">
+                <Dumbbell className="h-8 w-8 text-brand-500" />
+             </div>
+            <h1 className="text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-tighter leading-none">
+              {mode === 'login' && 'ACCÈS ÉLITE'}
+              {mode === 'signup' && 'REJOINDRE LE CLUB'}
+              {mode === 'forgot' && 'RÉCUPÉRATION'}
             </h1>
-            <p className="text-gray-400">
-              {mode === 'login' && 'Connectez-vous pour accéder à votre espace.'}
-              {mode === 'signup' && 'Commencez votre transformation dès aujourd\'hui.'}
-              {mode === 'forgot' && 'Entrez votre email pour réinitialiser votre mot de passe.'}
+            <p className="text-[#BBBBBB] font-bold uppercase tracking-widest text-[10px]">
+              {mode === 'login' && 'Connectez-vous pour continuer votre transformation.'}
+              {mode === 'signup' && 'Commencez votre parcours vers l\'excellence.'}
+              {mode === 'forgot' && 'Entrez votre email pour réinitialiser.'}
             </p>
           </div>
 
-          {/* Messages */}
           <AnimatePresence mode="wait">
             {error && (
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center gap-3 text-red-400 text-sm"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="mb-8 p-5 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center gap-4 text-red-500 text-[10px] font-black uppercase tracking-widest"
               >
                 <AlertCircle className="h-5 w-5 flex-shrink-0" />
                 <p>{error}</p>
@@ -112,10 +180,10 @@ const Auth: React.FC<AuthProps> = ({ mode: initialMode }) => {
             )}
             {success && (
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-3 text-emerald-400 text-sm"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="mb-8 p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-4 text-emerald-500 text-[10px] font-black uppercase tracking-widest"
               >
                 <CheckCircle2 className="h-5 w-5 flex-shrink-0" />
                 <p>{success}</p>
@@ -123,65 +191,61 @@ const Auth: React.FC<AuthProps> = ({ mode: initialMode }) => {
             )}
           </AnimatePresence>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <AnimatePresence mode="wait">
               {mode === 'signup' && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="space-y-5"
+                  className="space-y-6"
                 >
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="relative">
-                      <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <input
-                        type="text"
-                        placeholder="Prénom"
-                        {...register('firstName', { required: mode === 'signup' })}
-                        className={inputClass(!!errors.firstName)}
-                      />
-                    </div>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        placeholder="Nom"
-                        {...register('lastName', { required: mode === 'signup' })}
-                        className={inputClass(!!errors.lastName)}
-                      />
-                    </div>
-                  </div>
-                  <div className="relative">
-                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <input
-                      type="tel"
-                      placeholder="Téléphone"
-                      {...register('phone', { required: mode === 'signup' })}
-                      className={inputClass(!!errors.phone)}
+                    <FloatingInput 
+                      icon={User} 
+                      label="PRÉNOM" 
+                      name="firstName" 
+                      register={register} 
+                      rules={{ required: 'Requis' }} 
+                      error={errors.firstName} 
+                    />
+                    <FloatingInput 
+                      label="NOM" 
+                      name="lastName" 
+                      register={register} 
+                      rules={{ required: 'Requis' }} 
+                      error={errors.lastName} 
                     />
                   </div>
+                  <FloatingInput 
+                    icon={Phone} 
+                    label="TÉLÉPHONE" 
+                    name="phone" 
+                    type="tel"
+                    register={register} 
+                    rules={{ required: 'Requis' }} 
+                    error={errors.phone} 
+                  />
 
-                  {/* Choix du Forfait */}
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Choix du Forfait</label>
-                    <div className="grid grid-cols-3 gap-2">
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black text-[#BBBBBB] uppercase tracking-[0.2em] ml-1">SÉLECTIONNEZ VOTRE FORFAIT</label>
+                    <div className="grid grid-cols-3 gap-3">
                       {[
-                        { id: 'starter', label: 'Starter', icon: Star },
-                        { id: 'pro', label: 'Pro', icon: Zap },
-                        { id: 'elite', label: 'Elite', icon: Crown }
+                        { id: 'starter', label: 'STARTER', icon: Star },
+                        { id: 'pro', label: 'PRO', icon: Zap },
+                        { id: 'elite', label: 'ELITE', icon: Crown }
                       ].map((p) => (
                         <button
                           key={p.id}
                           type="button"
                           onClick={() => setSelectedPlan(p.id as any)}
-                          className={`flex flex-col items-center gap-2 py-3 rounded-xl border transition-all ${
+                          className={`flex flex-col items-center gap-3 py-5 rounded-2xl border-2 transition-all duration-300 ${
                             selectedPlan === p.id 
-                              ? 'bg-brand-500/10 border-brand-500 text-white shadow-lg shadow-brand-500/10' 
-                              : 'bg-white/5 border-white/5 text-gray-400 hover:border-white/20'
+                              ? 'bg-brand-500/10 border-brand-500 text-white shadow-xl shadow-brand-500/20' 
+                              : 'bg-dark-800 border-dark-300 text-dark-100 hover:border-dark-100'
                           }`}
                         >
-                          <p.icon className={`h-4 w-4 ${selectedPlan === p.id ? 'text-brand-500' : 'text-gray-500'}`} />
+                          <p.icon className={`h-5 w-5 ${selectedPlan === p.id ? 'text-brand-500' : 'text-dark-100'}`} />
                           <span className="text-[9px] font-black uppercase tracking-widest">{p.label}</span>
                         </button>
                       ))}
@@ -191,47 +255,41 @@ const Auth: React.FC<AuthProps> = ({ mode: initialMode }) => {
               )}
             </AnimatePresence>
 
-            <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                type="email"
-                placeholder="Email"
-                {...register('email', { 
-                  required: 'Email requis',
-                  pattern: { value: /^\S+@\S+$/i, message: 'Email invalide' }
-                })}
-                className={inputClass(!!errors.email)}
-              />
-              {errors.email && <p className="text-xs text-red-400 mt-1.5 ml-1">{errors.email.message as string}</p>}
-            </div>
+            <FloatingInput 
+              icon={Mail} 
+              label="EMAIL" 
+              name="email" 
+              type="email"
+              register={register} 
+              rules={{ 
+                required: 'Email requis',
+                pattern: { value: /^\S+@\S+$/i, message: 'Email invalide' }
+              }} 
+              error={errors.email} 
+            />
 
             {mode !== 'forgot' && (
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Mot de passe"
-                  {...register('password', { 
-                    required: 'Mot de passe requis',
-                    minLength: { value: 6, message: '6 caractères minimum' }
-                  })}
-                  className={inputClass(!!errors.password)}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
-                >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </button>
-                {errors.password && <p className="text-xs text-red-400 mt-1.5 ml-1">{errors.password.message as string}</p>}
-              </div>
+              <FloatingInput 
+                icon={Lock} 
+                label="MOT DE PASSE" 
+                name="password" 
+                type={showPassword ? 'text' : 'password'}
+                register={register} 
+                rules={{ 
+                  required: 'Mot de passe requis',
+                  minLength: { value: 6, message: '6 caractères minimum' }
+                }} 
+                error={errors.password}
+                showPasswordToggle={true}
+                showPassword={showPassword}
+                setShowPassword={setShowPassword}
+              />
             )}
 
             {mode === 'login' && (
               <div className="flex justify-end">
-                <Link to="/forgot-password" size="sm" className="text-xs text-brand-400 hover:text-brand-300 font-semibold">
-                  Mot de passe oublié ?
+                <Link to="/forgot-password" size="sm" className="text-[10px] text-brand-500 hover:text-brand-400 font-black uppercase tracking-widest transition-colors">
+                  Oublié ?
                 </Link>
               </div>
             )}
@@ -239,41 +297,40 @@ const Auth: React.FC<AuthProps> = ({ mode: initialMode }) => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full btn-primary py-4 mt-4 flex items-center justify-center gap-3 disabled:opacity-50"
+              className="w-full btn-primary py-5 mt-4 flex items-center justify-center gap-4 disabled:opacity-50 shadow-2xl shadow-brand-500/30 group"
             >
               {isSubmitting ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
+                <Loader2 className="h-6 w-6 animate-spin" />
               ) : (
                 <>
-                  {mode === 'login' && <LogIn className="h-5 w-5" />}
-                  {mode === 'signup' && <UserPlus className="h-5 w-5" />}
-                  {mode === 'forgot' && <Mail className="h-5 w-5" />}
-                  {mode === 'login' && 'Se Connecter'}
-                  {mode === 'signup' && 'Créer un Compte'}
-                  {mode === 'forgot' && 'Réinitialiser'}
+                  <span className="text-xs font-black uppercase tracking-[0.3em]">
+                    {mode === 'login' && 'ACCÉDER'}
+                    {mode === 'signup' && 'CONFIRMER'}
+                    {mode === 'forgot' && 'ENVOYER'}
+                  </span>
+                  <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform" />
                 </>
               )}
             </button>
           </form>
 
-          {/* Switch */}
-          <div className="mt-8 pt-8 border-t border-white/5 text-center">
+          <div className="mt-12 pt-10 border-t border-dark-300 text-center">
             {mode === 'forgot' ? (
               <Link
                 to="/login"
-                className="text-gray-400 hover:text-white text-sm font-bold flex items-center justify-center gap-2"
+                className="text-dark-100 hover:text-white text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all group"
               >
-                <ArrowLeft className="h-4 w-4" />
-                Retour à la connexion
+                <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+                Retour
               </Link>
             ) : (
-              <p className="text-gray-400 text-sm">
-                {mode === 'login' ? 'Pas encore de compte ?' : 'Déjà un compte ?'}
+              <p className="text-dark-100 text-[10px] font-black uppercase tracking-[0.2em]">
+                {mode === 'login' ? 'NOUVEAU ICI ?' : 'DÉJÀ MEMBRE ?'}
                 <Link
                   to={mode === 'login' ? '/signup' : '/login'}
-                  className="ml-2 text-brand-400 hover:text-brand-300 font-bold underline underline-offset-4"
+                  className="ml-3 text-brand-500 hover:text-brand-400 underline underline-offset-8 decoration-2"
                 >
-                  {mode === 'login' ? 'S\'inscrire' : 'Se connecter'}
+                  {mode === 'login' ? 'CRÉER UN COMPTE' : 'SE CONNECTER'}
                 </Link>
               </p>
             )}

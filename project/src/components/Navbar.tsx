@@ -27,81 +27,82 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => {
     setIsOpen(false);
   }, [location]);
 
   return (
     <nav
-      className={`sticky top-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? 'bg-dark-900 border-b border-dark-400 shadow-xl'
-          : 'bg-transparent'
+          ? 'bg-dark-900/90 backdrop-blur-xl border-b border-white/5 shadow-2xl py-2'
+          : 'bg-transparent py-4'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-20">
+        <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-3 group">
               <div className="relative">
-                <div className="absolute inset-0 bg-brand-500 rounded-xl blur-lg opacity-50 group-hover:opacity-80 transition-opacity duration-300" />
-                <div className="relative bg-gradient-to-br from-brand-400 to-brand-600 p-2 rounded-xl">
+                <div className="absolute inset-0 bg-brand-500 rounded-xl blur-lg opacity-40 group-hover:opacity-70 transition-opacity duration-500" />
+                <div className="relative bg-brand-500 p-2.5 rounded-xl shadow-lg shadow-brand-500/20">
                   <Dumbbell className="h-6 w-6 text-white" />
                 </div>
               </div>
-              <span className="font-display font-black text-2xl text-white tracking-tight">
-                Fit<span className="text-gradient">Zone</span>
+              <span className="font-display font-black text-2xl text-white uppercase tracking-tighter">
+                Fit<span className="text-brand-500">Zone</span>
               </span>
             </Link>
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden lg:flex items-center space-x-1">
+          <div className="hidden lg:flex items-center gap-1">
             {navigationLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`nav-link px-3 py-2 rounded-lg text-sm font-medium ${
+                className={`relative px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${
                   isActive(link.path)
-                    ? 'text-brand-400 active'
-                    : 'text-gray-300 hover:text-white hover:bg-white/5'
+                    ? 'text-brand-500'
+                    : 'text-dark-100 hover:text-white'
                 }`}
               >
                 {link.name}
+                {isActive(link.path) && (
+                  <motion.div
+                    layoutId="nav-underline"
+                    className="absolute bottom-0 left-4 right-4 h-0.5 bg-brand-500 rounded-full"
+                  />
+                )}
               </Link>
             ))}
             
-            <div className="flex items-center gap-2 ml-4 pl-4 border-l border-white/10">
+            <div className="flex items-center gap-3 ml-6 pl-6 border-l border-white/10">
               {isAuthenticated ? (
                 <Link
                   to="/profile"
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                  className={`flex items-center gap-3 px-5 py-2.5 rounded-xl transition-all duration-300 ${
                     isActive('/profile')
-                      ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/20'
-                      : 'text-gray-300 hover:text-white hover:bg-white/5 border border-white/5'
+                      ? 'bg-brand-500 text-white shadow-xl shadow-brand-500/20'
+                      : 'bg-white/5 border border-white/10 text-white hover:border-brand-500'
                   }`}
                 >
-                  <div className="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center">
-                    <User className="h-3.5 w-3.5" />
-                  </div>
-                  {user?.fullName.split(' ')[0]}
+                  <User className="h-4 w-4" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">{user?.fullName.split(' ')[0]}</span>
                 </Link>
               ) : (
                 <>
                   <Link
                     to="/login"
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-gray-300 hover:text-white transition-all"
+                    className="text-[10px] font-black uppercase tracking-widest text-dark-100 hover:text-white transition-colors"
                   >
-                    <LogIn className="h-4 w-4" />
                     Connexion
                   </Link>
                   <Link
                     to="/signup"
-                    className="btn-primary text-xs px-5 py-2.5 rounded-xl flex items-center gap-2"
+                    className="btn-primary text-[10px] px-6 py-3 rounded-xl uppercase tracking-widest font-black shadow-xl shadow-brand-500/20"
                   >
-                    <UserPlus className="h-4 w-4" />
                     S'inscrire
                   </Link>
                 </>
@@ -113,20 +114,9 @@ const Navbar = () => {
           <div className="lg:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-300 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-all duration-200"
-              aria-label="Toggle menu"
+              className="p-3 rounded-xl bg-white/5 border border-white/10 text-white transition-all hover:border-brand-500"
             >
-              <AnimatePresence mode="wait">
-                {isOpen ? (
-                  <motion.div key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                    <X className="h-6 w-6" />
-                  </motion.div>
-                ) : (
-                  <motion.div key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                    <Menu className="h-6 w-6" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
         </div>
@@ -136,66 +126,52 @@ const Navbar = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="lg:hidden overflow-hidden border-t border-white/5 bg-dark-900/95 backdrop-blur-xl"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="lg:hidden fixed inset-x-4 top-24 z-50 bg-dark-800 border border-dark-300 rounded-[2.5rem] p-6 shadow-2xl backdrop-blur-xl"
           >
-            <div className="px-4 py-4 space-y-1">
-              {navigationLinks.map((link, i) => (
-                <motion.div
+            <div className="flex flex-col gap-2">
+              {navigationLinks.map((link) => (
+                <Link
                   key={link.path}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
+                  to={link.path}
+                  className={`px-6 py-4 rounded-2xl text-xs font-black uppercase tracking-[0.2em] transition-all ${
+                    isActive(link.path)
+                      ? 'bg-brand-500 text-white'
+                      : 'text-dark-100 hover:bg-white/5'
+                  }`}
                 >
-                  <Link
-                    to={link.path}
-                    className={`block px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
-                      isActive(link.path)
-                        ? 'text-brand-400 bg-brand-500/10 border border-brand-500/20'
-                        : 'text-gray-300 hover:text-white hover:bg-white/5'
-                    }`}
-                  >
-                    {link.name}
-                  </Link>
-                </motion.div>
+                  {link.name}
+                </Link>
               ))}
               
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: navigationLinks.length * 0.05 }}
-                className="pt-4 mt-4 border-t border-white/5 space-y-3"
-              >
+              <div className="mt-4 pt-4 border-t border-white/5 flex flex-col gap-3">
                 {isAuthenticated ? (
                   <Link
                     to="/profile"
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-500 text-white font-bold"
+                    className="flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-brand-500 text-white font-black uppercase tracking-widest text-xs"
                   >
                     <User className="h-5 w-5" />
-                    Mon Profil ({user?.fullName})
+                    Mon Profil
                   </Link>
                 ) : (
                   <>
                     <Link
                       to="/login"
-                      className="flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-white/5 text-white font-bold border border-white/10"
+                      className="flex items-center justify-center px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-black uppercase tracking-widest text-xs"
                     >
-                      <LogIn className="h-5 w-5" />
                       Connexion
                     </Link>
                     <Link
                       to="/signup"
-                      className="flex items-center justify-center gap-3 px-4 py-3 rounded-xl btn-primary font-bold"
+                      className="flex items-center justify-center px-6 py-4 rounded-2xl btn-primary font-black uppercase tracking-widest text-xs"
                     >
-                      <UserPlus className="h-5 w-5" />
                       S'inscrire
                     </Link>
                   </>
                 )}
-              </motion.div>
+              </div>
             </div>
           </motion.div>
         )}

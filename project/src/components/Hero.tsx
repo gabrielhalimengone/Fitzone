@@ -5,63 +5,108 @@ import { Play, Users, Star, Award, ChevronRight, X, Calendar, MessageSquare, Che
 import { AnimatePresence } from 'framer-motion';
 import gymVideo from '../assets/gym.mp4';
 
-// Animated counter hook
-function useCountUp(target: number, duration = 1500) {
-  const [count, setCount] = useState(0);
-  const [started, setStarted] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting && !started) setStarted(true); },
-      { threshold: 0.3 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [started]);
-
-  useEffect(() => {
-    if (!started) return;
-    let start = 0;
-    const step = target / (duration / 16);
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= target) { setCount(target); clearInterval(timer); }
-      else setCount(Math.floor(start));
-    }, 16);
-    return () => clearInterval(timer);
-  }, [started, target, duration]);
-
-  return { count, ref };
-}
-
-const StatCard = ({ icon: Icon, value, suffix = '', label, display }: { icon: React.ElementType; value: number; suffix?: string; label: string; display?: string }) => {
-  const { count, ref } = useCountUp(value);
-  return (
-    <div ref={ref} className="text-center group flex flex-col items-center">
-      <div className="relative inline-flex mb-3">
-        <div className="absolute inset-0 bg-brand-500/10 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300" />
-        <div className="relative bg-dark-600 border border-dark-300 rounded-2xl p-2.5 sm:p-3 group-hover:border-brand-500 transition-all duration-300">
-          <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-brand-500" />
-        </div>
-      </div>
-      <div className="text-2xl sm:text-3xl font-display font-black text-white leading-tight">
-        {display ?? `${count}${suffix}`}
-      </div>
-      <div className="text-xs sm:text-sm text-dark-100 mt-1 font-bold uppercase tracking-wider">{label}</div>
-    </div>
-  );
-};
-
 const FloatingShape = ({ className }: { className: string }) => (
   <div className={`absolute rounded-full blur-3xl opacity-10 animate-float ${className}`} />
 );
 
 const Hero = () => {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
-  const [activeForm, setActiveForm] = useState<'trial' | 'consultation' | null>(null);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [spotsLeft, setSpotsLeft] = useState(3);
+  const [nextSession, setNextSession] = useState({ course: 'Chargement...', time: '--:--', coach: '' });
+
+  // Schedule data (simplified from Schedule.tsx)
+  const schedule: Record<string, Record<string, { course: string; coach: string }>> = {
+    'Lundi': {
+      '07:00': { course: 'Cardio Intensif', coach: 'Marc Durand' },
+      '09:00': { course: 'Yoga Flow', coach: 'Sarah Lopez' },
+      '12:00': { course: 'HIIT Bootcamp', coach: 'Jean Rémy' },
+      '18:00': { course: 'CrossFit Power', coach: 'Marc Durand' },
+      '19:00': { course: 'Pilates Core', coach: 'Sarah Lopez' },
+    },
+    'Mardi': {
+      '06:00': { course: 'Musculation Débutant', coach: 'Jean Rémy' },
+      '08:00': { course: 'Yoga Flow', coach: 'Sarah Lopez' },
+      '10:00': { course: 'Cardio Intensif', coach: 'Marc Durand' },
+      '17:00': { course: 'CrossFit Power', coach: 'Marc Durand' },
+      '19:00': { course: 'HIIT Bootcamp', coach: 'Jean Rémy' },
+    },
+    'Mercredi': {
+      '07:00': { course: 'Pilates Core', coach: 'Sarah Lopez' },
+      '09:00': { course: 'Cardio Intensif', coach: 'Marc Durand' },
+      '12:00': { course: 'Yoga Flow', coach: 'Sarah Lopez' },
+      '18:00': { course: 'Musculation Débutant', coach: 'Jean Rémy' },
+      '20:00': { course: 'HIIT Bootcamp', coach: 'Jean Rémy' },
+    },
+    'Jeudi': {
+      '06:00': { course: 'CrossFit Power', coach: 'Marc Durand' },
+      '08:00': { course: 'Pilates Core', coach: 'Sarah Lopez' },
+      '10:00': { course: 'Yoga Flow', coach: 'Sarah Lopez' },
+      '17:00': { course: 'Cardio Intensif', coach: 'Marc Durand' },
+      '19:00': { course: 'Musculation Débutant', coach: 'Jean Rémy' },
+    },
+    'Vendredi': {
+      '07:00': { course: 'HIIT Bootcamp', coach: 'Jean Rémy' },
+      '09:00': { course: 'Yoga Flow', coach: 'Sarah Lopez' },
+      '12:00': { course: 'CrossFit Power', coach: 'Marc Durand' },
+      '18:00': { course: 'Pilates Core', coach: 'Sarah Lopez' },
+      '19:00': { course: 'Cardio Intensif', coach: 'Marc Durand' },
+    },
+    'Samedi': {
+      '08:00': { course: 'Yoga Flow', coach: 'Sarah Lopez' },
+      '10:00': { course: 'CrossFit Power', coach: 'Marc Durand' },
+      '11:00': { course: 'HIIT Bootcamp', coach: 'Jean Rémy' },
+      '14:00': { course: 'Musculation Débutant', coach: 'Jean Rémy' },
+      '16:00': { course: 'Pilates Core', coach: 'Sarah Lopez' },
+    },
+    'Dimanche': {
+      '09:00': { course: 'Yoga Flow', coach: 'Sarah Lopez' },
+      '10:00': { course: 'Cardio Intensif', coach: 'Marc Durand' },
+      '11:00': { course: 'Pilates Core', coach: 'Sarah Lopez' },
+      '17:00': { course: 'HIIT Bootcamp', coach: 'Jean Rémy' },
+    },
+  };
+
+  const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+
+  useEffect(() => {
+    const updateNextSession = () => {
+      const now = new Date();
+      const currentDay = days[now.getDay()];
+      const currentHour = now.getHours();
+      const currentMinute = now.getMinutes();
+      
+      const daySchedule = schedule[currentDay];
+      const sortedTimes = Object.keys(daySchedule).sort();
+      
+      // Find next session today
+      let next = sortedTimes.find(time => {
+        const [hour, minute] = time.split(':').map(Number);
+        return hour > currentHour || (hour === currentHour && minute > currentMinute);
+      });
+
+      if (next) {
+        setNextSession({ 
+          course: daySchedule[next].course, 
+          time: next, 
+          coach: daySchedule[next].coach 
+        });
+      } else {
+        // Find first session of tomorrow
+        const tomorrowDay = days[(now.getDay() + 1) % 7];
+        const tomorrowSchedule = schedule[tomorrowDay];
+        const firstTime = Object.keys(tomorrowSchedule).sort()[0];
+        setNextSession({ 
+          course: tomorrowSchedule[firstTime].course, 
+          time: `Demain ${firstTime}`, 
+          coach: tomorrowSchedule[firstTime].coach 
+        });
+      }
+    };
+
+    updateNextSession();
+    const interval = setInterval(updateNextSession, 60000); // Update every minute
+    return () => clearInterval(interval);
+  }, []);
 
   // Simulate real-time urgency
   useEffect(() => {
@@ -70,17 +115,6 @@ const Hero = () => {
     }, 45000);
     return () => clearTimeout(timer);
   }, [spotsLeft]);
-
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitted(true);
-    if (spotsLeft > 1) setSpotsLeft(prev => prev - 1);
-    
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setActiveForm(null);
-    }, 3000);
-  };
 
   return (
     <section className="relative flex items-center bg-dark-900 overflow-hidden pt-24 pb-6 lg:pt-24 lg:pb-8 min-h-[90vh]">
@@ -109,8 +143,6 @@ const Hero = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.9 }}
           >
-
-
             <h1 className="font-display text-5xl md:text-7xl font-black leading-[0.9] mb-6 text-shadow uppercase tracking-tighter">
               <span className="text-white">Transformez</span>
               <br />
@@ -142,13 +174,6 @@ const Hero = () => {
                 Voir Nos salles
               </button>
             </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-10 pt-8 border-t border-dark-400">
-              <StatCard icon={Users} value={500} suffix="+" label="Membres" />
-              <StatCard icon={Star} value={49} suffix="" label="Avis" display="4.9/5" />
-              <StatCard icon={Award} value={5} suffix=" ans" label="Expertise" />
-            </div>
           </motion.div>
 
           {/* Right column */}
@@ -179,17 +204,23 @@ const Hero = () => {
                </div>
             </motion.div>
             
-            <div className="bg-dark-600/50 backdrop-blur-xl rounded-3xl p-6 border border-dark-300 shadow-2xl -rotate-2">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              key={nextSession.course}
+              className="bg-dark-600/50 backdrop-blur-xl rounded-3xl p-6 border border-dark-300 shadow-2xl -rotate-2"
+            >
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-brand-500 rounded-2xl flex items-center justify-center shadow-lg shadow-brand-500/20">
-                  <Star className="h-6 w-6 text-white fill-current" />
+                  <Calendar className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <div className="text-white font-black text-sm uppercase tracking-wide">Cours du Jour</div>
-                  <div className="text-dark-100 text-xs font-bold">CrossFit Power — 18:00</div>
+                  <div className="text-white font-black text-sm uppercase tracking-wide">Cours à Venir</div>
+                  <div className="text-brand-500 text-xs font-black uppercase tracking-widest">{nextSession.course}</div>
+                  <div className="text-dark-100 text-[10px] font-bold">{nextSession.time} — {nextSession.coach}</div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         </div>
       </div>
@@ -223,7 +254,6 @@ const Hero = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
     </section>
   );
 };

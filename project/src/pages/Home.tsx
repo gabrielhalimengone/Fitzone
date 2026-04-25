@@ -1,8 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Hero from '../components/Hero';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Target, Users, Clock, Trophy, ArrowRight, Zap, X, CheckCircle2, User } from 'lucide-react';
+import { Target, Users, Clock, Trophy, ArrowRight, Zap, X, CheckCircle2, User, Star, Award } from 'lucide-react';
+
+// Animated counter hook
+function useCountUp(target: number, duration = 1500) {
+  const [count, setCount] = useState(0);
+  const [started, setStarted] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting && !started) setStarted(true); },
+      { threshold: 0.3 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [started]);
+
+  useEffect(() => {
+    if (!started) return;
+    let start = 0;
+    const step = target / (duration / 16);
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= target) { setCount(target); clearInterval(timer); }
+      else setCount(Math.floor(start));
+    }, 16);
+    return () => clearInterval(timer);
+  }, [started, target, duration]);
+
+  return { count, ref };
+}
+
+const StatItem = ({ icon: Icon, value, suffix = '', label, display }: { icon: React.ElementType; value: number; suffix?: string; label: string; display?: string }) => {
+  const { count, ref } = useCountUp(value);
+  return (
+    <div ref={ref} className="text-center group flex flex-col items-center">
+      <div className="relative inline-flex mb-4">
+        <div className="absolute inset-0 bg-brand-500/10 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300" />
+        <div className="relative bg-dark-700 border border-dark-400 rounded-3xl p-5 group-hover:border-brand-500 transition-all duration-300">
+          <Icon className="h-8 w-8 text-brand-500" />
+        </div>
+      </div>
+      <div className="text-4xl font-black text-white leading-tight uppercase tracking-tighter">
+        {display ?? `${count}${suffix}`}
+      </div>
+      <div className="text-[10px] text-dark-100 mt-2 font-black uppercase tracking-[0.2em]">{label}</div>
+    </div>
+  );
+};
 
 const features = [
   {
@@ -10,28 +58,24 @@ const features = [
     title: 'Programmes Personnalisés',
     description: 'Des entraînements sur-mesure adaptés à vos objectifs et votre niveau actuel.',
     color: 'from-orange-500 to-brand-500',
-    glow: 'rgba(255,69,0,0.2)',
   },
   {
     icon: Users,
     title: 'Coachs Certifiés',
     description: "Une équipe d'experts passionnés pour vous accompagner dans votre progression.",
     color: 'from-dark-300 to-dark-400',
-    glow: 'rgba(255,255,255,0.05)',
   },
   {
     icon: Clock,
     title: 'Horaires Flexibles',
     description: 'Ouvert 7j/7 avec des créneaux larges pour s\'adapter à votre emploi du temps.',
     color: 'from-orange-500 to-brand-500',
-    glow: 'rgba(255,69,0,0.2)',
   },
   {
     icon: Trophy,
     title: 'Résultats Garantis',
     description: 'Un suivi rigoureux et des conseils nutritionnels pour atteindre vos sommets.',
     color: 'from-dark-300 to-dark-400',
-    glow: 'rgba(255,255,255,0.05)',
   },
 ];
 
@@ -64,9 +108,16 @@ const Home = () => {
             >
               Pourquoi Choisir <span className="text-brand-500">FitZone ?</span>
             </motion.h2>
-            <p className="text-dark-100 max-w-2xl mx-auto font-medium">
+            <p className="text-dark-100 max-w-2xl mx-auto font-medium mb-12">
               Nous combinons expertise, technologie et motivation pour vous offrir la meilleure expérience fitness.
             </p>
+
+            {/* Integrated Stats Row */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-10 max-w-4xl mx-auto mb-20 pt-10 border-t border-dark-400">
+               <StatItem icon={Users} value={500} suffix="+" label="Membres" />
+               <StatItem icon={Star} value={49} suffix="" label="Avis" display="4.9/5" />
+               <StatItem icon={Award} value={5} suffix=" ans" label="Expertise" />
+            </div>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
