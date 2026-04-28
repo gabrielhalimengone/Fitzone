@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Clock, CalendarDays, AlertCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, CalendarDays, Lock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -86,11 +86,6 @@ const Schedule = () => {
   };
 
   const handleBooking = (dayIndex: number, time: string, session: any) => {
-    if (!isAuthenticated) {
-      navigate('/login', { state: { from: location } });
-      return;
-    }
-
     const date = weekDates[dayIndex].toISOString().split('T')[0];
     const isAlreadyReserved = user?.reservedSessions.some(
       s => s.date === date && s.time === time && s.courseName === session.course
@@ -113,6 +108,48 @@ const Schedule = () => {
   const filledTimes = times.filter(time =>
     days.some(day => schedule[day as keyof typeof schedule]?.[time as any])
   );
+
+  // ─── Écran de blocage si non connecté ───────────────────────────────────────
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-dark-900 flex items-center justify-center px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="bg-[#1E1E1E] border border-[#3A3A3A] rounded-[2rem] p-12 max-w-md w-full text-center"
+        >
+          {/* Icône cadenas */}
+          <div className="w-16 h-16 bg-brand-500 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Lock className="h-7 w-7 text-white" />
+          </div>
+
+          <h2 className="text-white font-black text-lg uppercase tracking-[0.15em] mb-3">
+            Accès restreint
+          </h2>
+          <p className="text-dark-100 text-xs leading-relaxed mb-8">
+            Connectez-vous pour consulter le planning des cours et réserver vos séances.
+          </p>
+
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={() => navigate('/login', { state: { from: '/schedule' } })}
+              className="w-full py-4 bg-brand-500 hover:bg-brand-600 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all"
+            >
+              Se connecter
+            </button>
+            <button
+              onClick={() => navigate('/signup')}
+              className="w-full py-4 bg-transparent border border-[#3A3A3A] hover:border-brand-500 text-dark-100 hover:text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all"
+            >
+              Créer un compte
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+  // ────────────────────────────────────────────────────────────────────────────
 
   return (
     <div className="min-h-screen bg-dark-900 pb-20">
@@ -143,16 +180,6 @@ const Schedule = () => {
       </div>
 
       <div className="max-w-full px-4 sm:px-6 lg:px-8 xl:max-w-[1500px] xl:mx-auto">
-        {!isAuthenticated && (
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-10 flex items-center gap-4 bg-brand-500/10 border border-brand-500/20 rounded-2xl px-6 py-4 text-brand-500 font-bold text-xs uppercase tracking-widest"
-          >
-            <AlertCircle className="h-5 w-5" />
-            Connectez-vous pour pouvoir réserver vos séances.
-          </motion.div>
-        )}
 
         {/* Week Navigation */}
         <motion.div
